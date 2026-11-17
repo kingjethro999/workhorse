@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "npm install -g zyrk && zyrk install",
+  "installCommand": "npm install -g zyrk && npm install",
   "buildCommand": "zyrk build",
   "devCommand": "zyrk dev"
 }
