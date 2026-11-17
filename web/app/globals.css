@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --bg-primary: #0a0e17;
+  --bg-surface: #111827;
+  --bg-surface-elevated: #1e293b;
+  --accent-local: #10b981;
+  --accent-cloud: #38bdf8;
+  --accent-success: #10b981;
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #1e293b;
+}
+
+[data-theme="obsidian"] {
+  --bg-primary: #08090A;
+  --bg-surface: #141619;
+  --bg-surface-elevated: #1f2328;
+  --accent-local: #FFB000;
+  --accent-cloud: #2563EB;
+  --accent-success: #10B981;
+  --text-primary: #F3F4F6;
+  --text-muted: #9ca3af;
+  --border-color: #262a30;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Accessible focus outline */
+:focus-visible {
+  outline: 2px solid var(--accent-local);
+  outline-offset: 2px;
+}

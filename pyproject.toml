@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "workhorse"
+version = "0.0.1"
+description = "Universal Terminal Workstation and Autonomous Agent"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ollama>=0.3.0",
+    "openai>=1.50.0",
+    "google-genai>=0.1.0",
+    "langfuse>=2.50.0",
+    "python-dotenv>=1.0.1",
+    "requests>=2.31.0",
+    "textual>=0.85.0",
+    "rich>=13.9.0",
+    "pyyaml>=6.0.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0"
+]
+
+[project.scripts]
+workhorse = "workhorse.cli:run_cli"
+workhouse = "workhorse.cli:run_cli"
+wh = "workhorse.cli:run_cli"
+
+[tool.setuptools.packages.find]
+include = ["workhorse*"]
+

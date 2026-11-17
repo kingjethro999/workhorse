@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Workhorse Git Pre-Commit Hook: Auto Version Bumper
+# =============================================================================
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+PYTHON_EXEC="$REPO_ROOT/.venv/bin/python"
+
+if [ ! -x "$PYTHON_EXEC" ]; then
+    PYTHON_EXEC="python3"
+fi
+
+# Run the version bumper
+OUTPUT=$("$PYTHON_EXEC" "$REPO_ROOT/scripts/bump_version.py")
+echo "$OUTPUT"
+
+# Stage the updated version tracking files
+git add "$REPO_ROOT/version" "$REPO_ROOT/pyproject.toml" "$REPO_ROOT/workhorse/__init__.py" 2>/dev/null || true

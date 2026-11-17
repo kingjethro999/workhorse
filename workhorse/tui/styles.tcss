@@ -1,0 +1,225 @@
+/* Workhorse Master Textual CSS */
+Screen {
+    background: #0d1117;
+    color: #c9d1d9;
+}
+
+Header {
+    dock: top;
+    height: 3;
+    background: #161b22;
+    color: #58a6ff;
+    border-bottom: heavy #30363d;
+}
+
+Footer {
+    dock: bottom;
+    height: 1;
+    background: #161b22;
+    color: #8b949e;
+}
+
+#sidebar {
+    width: 32;
+    dock: left;
+    background: #0d1117;
+    border-right: solid #30363d;
+    padding: 0 1;
+}
+
+#sidebar-title {
+    text-align: center;
+    color: #58a6ff;
+    text-style: bold;
+    margin: 1 0;
+}
+
+#crud-actions {
+    height: 3;
+    margin-bottom: 1;
+}
+
+#crud-actions Button {
+    min-width: 8;
+    height: 3;
+    margin: 0 1;
+}
+
+#file-tree {
+    background: #0d1117;
+    color: #8b949e;
+    height: 1fr;
+}
+
+#main-panel {
+    height: 1fr;
+    background: #0d1117;
+}
+
+#chat-container {
+    height: 1fr;
+    padding: 1;
+    overflow-y: scroll;
+}
+
+#input-container {
+    dock: bottom;
+    height: 7;
+    background: #161b22;
+    border-top: heavy #30363d;
+    padding: 0 1;
+}
+
+#prompt-input {
+    height: 5;
+    background: #0d1117;
+    border: solid #30363d;
+}
+
+ThoughtAccordion {
+    margin: 1 0;
+}
+
+#editor-dialog, #confirm-dialog, #picker-dialog, #help-dialog, #new-file-dialog, #skills-mcp-dialog {
+    width: 78;
+    height: 28;
+    background: #161b22;
+    border: heavy #58a6ff;
+    padding: 1;
+    align: center middle;
+}
+
+#editor-textarea {
+    height: 16;
+    margin: 1 0;
+}
+
+#help-title, #picker-title, #editor-title, #hub-title {
+    color: #58a6ff;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#skills-column, #mcp-column {
+    width: 1fr;
+    height: 18;
+    padding: 1;
+    border: solid #30363d;
+    overflow-y: scroll;
+}
+
+.sub-title {
+    color: #e3b341;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+/* =============================================================================
+   Obsidian & Neon Industrial Theme
+   Palette:
+   - Primary / Canvas: OLED Obsidian #08090A
+   - Surface / Panels: Gunmetal Gray #141619
+   - Brand Accent (Fast/Local): Terminal Amber #FFB000
+   - Power Accent (Cloud/Exec): Electric Cobalt #2563EB
+   - Success / Live Status: Matrix Emerald #10B981
+   - Typography / Foreground: Platinum White #F3F4F6
+   ============================================================================= */
+
+Screen.theme-obsidian {
+    background: #08090A;
+    color: #F3F4F6;
+}
+
+Screen.theme-obsidian Header {
+    background: #141619;
+    color: #FFB000;
+    border-bottom: heavy #FFB000;
+}
+
+Screen.theme-obsidian Footer {
+    background: #141619;
+    color: #F3F4F6;
+}
+
+Screen.theme-obsidian #sidebar {
+    background: #08090A;
+    border-right: solid #141619;
+}
+
+Screen.theme-obsidian #sidebar-title {
+    color: #FFB000;
+}
+
+Screen.theme-obsidian #crud-actions Button#btn-new {
+    background: #FFB000;
+    color: #08090A;
+}
+
+Screen.theme-obsidian #crud-actions Button#btn-edit {
+    background: #141619;
+    color: #F3F4F6;
+    border: solid #2563EB;
+}
+
+Screen.theme-obsidian #crud-actions Button#btn-del {
+    background: #141619;
+    color: #ef4444;
+    border: solid #ef4444;
+}
+
+Screen.theme-obsidian #file-tree {
+    background: #08090A;
+    color: #F3F4F6;
+}
+
+Screen.theme-obsidian #main-panel {
+    background: #08090A;
+}
+
+Screen.theme-obsidian #chat-container {
+    background: #08090A;
+}
+
+Screen.theme-obsidian #input-container {
+    background: #141619;
+    border-top: heavy #2563EB;
+}
+
+Screen.theme-obsidian #prompt-input {
+    background: #08090A;
+    color: #F3F4F6;
+    border: solid #2563EB;
+}
+
+Screen.theme-obsidian ThoughtAccordion {
+    margin: 1 0;
+}
+
+Screen.theme-obsidian #editor-dialog,
+Screen.theme-obsidian #confirm-dialog,
+Screen.theme-obsidian #picker-dialog,
+Screen.theme-obsidian #help-dialog,
+Screen.theme-obsidian #new-file-dialog,
+Screen.theme-obsidian #skills-mcp-dialog {
+    background: #141619;
+    border: heavy #2563EB;
+    color: #F3F4F6;
+}
+
+Screen.theme-obsidian #help-title,
+Screen.theme-obsidian #picker-title,
+Screen.theme-obsidian #editor-title,
+Screen.theme-obsidian #hub-title {
+    color: #FFB000;
+}
+
+Screen.theme-obsidian #skills-column,
+Screen.theme-obsidian #mcp-column {
+    background: #08090A;
+    border: solid #141619;
+    color: #F3F4F6;
+}
+
+Screen.theme-obsidian .sub-title {
+    color: #FFB000;
+}
