@@ -30,12 +30,13 @@ def test_cli_tui_flag_launches_tui():
 
 def test_cli_version_flag(capsys):
     import pytest
+    from workhorse import __version__
     with patch("sys.argv", ["wh", "--version"]):
         with pytest.raises(SystemExit) as exc_info:
             run_cli()
         assert exc_info.value.code == 0
         captured = capsys.readouterr()
-        assert "workhorse 0.0.1" in captured.out or "workhorse 0.0.1" in captured.err
+        assert f"workhorse {__version__}" in captured.out or f"workhorse {__version__}" in captured.err
 
 def test_cli_piped_input_executes_prompt():
     fake_stdin = io.StringIO("secret_token_1234")
