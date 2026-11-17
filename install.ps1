@@ -4,9 +4,19 @@
 $InstallDir = if ($MyInvocation.MyCommand.Path) { Split-Path -Parent $MyInvocation.MyCommand.Path } else { $null }
 if (-not $InstallDir -or -not (Test-Path (Join-Path $InstallDir "workhorse.py"))) {
     $InstallDir = Join-Path $env:USERPROFILE "workhorse"
-    if (-not (Test-Path $InstallDir)) {
-        Write-Host "[*] Cloning Workhorse repository to $InstallDir..." -ForegroundColor Cyan
-        git clone https://github.com/kingjethro999/workhorse.git $InstallDir
+    Write-Host "[*] Resolving latest Workhorse release from GitHub..." -ForegroundColor Cyan
+    try {
+        $Release = Invoke-RestMethod -Uri "https://api.github.com/repos/kingjethro999/workhorse/releases/latest" -UseBasicParsing -ErrorAction Stop
+        $LatestTag = $Release.tag_name
+    } catch {
+        $LatestTag = "main"
+    }
+    Write-Host "[*] Installing Workhorse release ($LatestTag) into $InstallDir..." -ForegroundColor Cyan
+    if (Test-Path (Join-Path $InstallDir ".git")) {
+        git -C $InstallDir fetch --tags
+        git -C $InstallDir checkout $LatestTag
+    } else {
+        git clone --depth 1 --branch $LatestTag https://github.com/kingjethro999/workhorse.git $InstallDir
     }
 }
 $VenvPython = Join-Path $InstallDir ".venv\Scripts\python.exe"
@@ -17,6 +27,7 @@ if (-not (Test-Path $VenvPython)) {
     python -m venv (Join-Path $InstallDir ".venv")
     & $VenvPython -m pip install --upgrade pip
     & $VenvPython -m pip install -r (Join-Path $InstallDir "requirements.txt")
+    & $VenvPython -m pip install -e $InstallDir
 }
 
 $UserBin = Join-Path $env:USERPROFILE "bin"

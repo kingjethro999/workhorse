@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "workhorse"
-version = "0.0.3"
+version = "0.0.4"
 description = "Universal Terminal Workstation and Autonomous Agent"
 readme = "README.md"
 requires-python = ">=3.10"

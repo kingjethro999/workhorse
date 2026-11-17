@@ -9,10 +9,16 @@ LOCAL_BIN="$HOME/.local/bin"
 
 if [ ! -f "$SCRIPT_DIR/workhorse.py" ]; then
     INSTALL_TARGET="$HOME/.workhorse"
-    echo "[*] Cloning Workhorse repository to $INSTALL_TARGET..."
-    if [ -d "$INSTALL_TARGET" ]; then
-        (cd "$INSTALL_TARGET" && git pull 2>/dev/null || true)
+    echo "[*] Resolving latest Workhorse release from GitHub..."
+    LATEST_TAG=$(curl -sSL -H "Accept: application/vnd.github+json" https://api.github.com/repos/kingjethro999/workhorse/releases/latest 2>/dev/null | grep -o '"tag_name": *"[^"]*"' | head -n 1 | cut -d'"' -f4)
+    if [ -z "$LATEST_TAG" ]; then
+        LATEST_TAG="main"
+    fi
+    echo "[*] Installing Workhorse release ($LATEST_TAG) into $INSTALL_TARGET..."
+    if [ -d "$INSTALL_TARGET/.git" ]; then
+        (cd "$INSTALL_TARGET" && git fetch --tags 2>/dev/null && git checkout "$LATEST_TAG" 2>/dev/null || git checkout main)
     else
+        git clone --depth 1 --branch "$LATEST_TAG" https://github.com/kingjethro999/workhorse.git "$INSTALL_TARGET" 2>/dev/null || \
         git clone https://github.com/kingjethro999/workhorse.git "$INSTALL_TARGET"
     fi
     SCRIPT_DIR="$INSTALL_TARGET"
@@ -29,6 +35,7 @@ fi
 echo "[*] Upgrading pip and installing dependencies..."
 "$SCRIPT_DIR/.venv/bin/pip" install --upgrade pip
 "$SCRIPT_DIR/.venv/bin/pip" install -r "$SCRIPT_DIR/requirements.txt"
+"$SCRIPT_DIR/.venv/bin/pip" install -e "$SCRIPT_DIR"
 
 # 2. Setup global wrapper in ~/.local/bin
 mkdir -p "$LOCAL_BIN"
@@ -60,16 +67,14 @@ if [ -d "$SCRIPT_DIR/.git" ]; then
     chmod +x "$SCRIPT_DIR/.git/hooks/pre-commit"
 fi
 
-# 5. Check PATH configuration
+# 5. Check PATH and inform user
+echo ""
 if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
-    echo "[!] Notice: $LOCAL_BIN is not in your current PATH."
-    if ! grep -q '\.local/bin' "$HOME/.bashrc" 2>/dev/null; then
-        echo "[*] Adding export PATH=\"\$HOME/.local/bin:\$PATH\" to ~/.bashrc..."
-        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
-    fi
+    echo "[!] Notice: $LOCAL_BIN is not currently in your \$PATH."
+    echo "    Add this to your ~/.bashrc or ~/.zshrc:"
+    echo "    export PATH=\"\$HOME/.local/bin:\$PATH\""
+    echo ""
 fi
 
-echo "============================================================"
-echo "  [SUCCESS] Installed: 'workhorse', 'workhouse', and 'wh'    "
-echo "  Call 'wh' or 'workhouse' in ANY directory to launch TUI!  "
-echo "============================================================"
+echo "[SUCCESS] Workhorse installed successfully!"
+echo "          Executable from ANY directory via: workhorse, workhouse, or wh"
