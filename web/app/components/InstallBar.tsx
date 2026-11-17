@@ -8,7 +8,8 @@ export const InstallBar: React.FC = () => {
 
   const commands = {
     curl: "curl -fsSL https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.sh | bash",
-    powershell: "irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 | iex",
+    powershell:
+      "irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 | iex",
     git: "git clone https://github.com/kingjethro999/workhorse.git ~/.local/share/workhorse && cd ~/.local/share/workhorse && ./install.sh",
   };
 
@@ -33,7 +34,11 @@ export const InstallBar: React.FC = () => {
                 : "bg-[var(--bg-surface)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             }`}
           >
-            {t === "curl" ? "Linux / macOS" : t === "powershell" ? "Windows PowerShell" : "From Source"}
+            {t === "curl"
+              ? "Linux / macOS"
+              : t === "powershell"
+                ? "Windows PowerShell"
+                : "From Source"}
           </button>
         ))}
       </div>
@@ -59,7 +64,11 @@ export const InstallBar: React.FC = () => {
       </div>
 
       <p className="text-xs text-[var(--text-muted)] font-mono text-center">
-        Universal Tri-Alias: Automatically symlinks <code className="text-[var(--accent-local)]">workhorse</code>, <code className="text-[var(--accent-local)]">workhouse</code>, and <code className="text-[var(--accent-local)]">wh</code> into <code className="text-zinc-400">~/.local/bin</code>.
+        Universal Tri-Alias: Automatically symlinks{" "}
+        <code className="text-[var(--accent-local)]">workhorse</code>,{" "}
+        <code className="text-[var(--accent-local)]">workhouse</code>, and{" "}
+        <code className="text-[var(--accent-local)]">wh</code> into{" "}
+        <code className="text-zinc-400">~/.local/bin</code>.
       </p>
     </div>
   );

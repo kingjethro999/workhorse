@@ -14,13 +14,13 @@
 }
 
 [data-theme="obsidian"] {
-  --bg-primary: #08090A;
+  --bg-primary: #08090a;
   --bg-surface: #141619;
   --bg-surface-elevated: #1f2328;
-  --accent-local: #FFB000;
-  --accent-cloud: #2563EB;
-  --accent-success: #10B981;
-  --text-primary: #F3F4F6;
+  --accent-local: #ffb000;
+  --accent-cloud: #2563eb;
+  --accent-success: #10b981;
+  --text-primary: #f3f4f6;
   --text-muted: #9ca3af;
   --border-color: #262a30;
 }
@@ -28,11 +28,22 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 /* Accessible focus outline */

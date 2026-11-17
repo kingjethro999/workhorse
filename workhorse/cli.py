@@ -7,14 +7,17 @@ import asyncio
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.table import Table
+from workhorse import __version__
 from workhorse.config import Config
 from workhorse.agent import AgentRuntime
 from workhorse.tools.file_crud import WorkspaceManager
+from workhorse.tui.app import WorkhorseApp
 
 console = Console()
 
 def run_cli():
     parser = argparse.ArgumentParser(prog="workhorse", description="Workhorse: Universal Terminal Workstation")
+    parser.add_argument("-v", "--version", action="version", version=f"workhorse {__version__}")
     parser.add_argument("prompt", nargs="*", default=[], help="User prompt to execute")
     parser.add_argument("-m", "--mode", default="auto:auto", help="Execution mode (auto:auto, local, groq, nvidia, gemini, openrouter)")
     parser.add_argument("-w", "--web", action="store_true", help="Enable live multi-engine web intelligence")
@@ -143,10 +146,6 @@ def run_cli():
         console.print("[red]Error: Cannot launch interactive Terminal UI without a TTY. Please provide a prompt or pipe input.[/red]")
         sys.exit(1)
 
-    # Launch full interactive TUI using app.py / WorkhorseApp
-    try:
-        from app import WorkhorseApp
-    except ImportError:
-        from workhorse.tui.app import WorkhorseApp
+    # Launch full interactive TUI using WorkhorseApp
     app = WorkhorseApp()
     app.run()

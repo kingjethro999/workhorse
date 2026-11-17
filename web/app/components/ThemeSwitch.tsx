@@ -6,7 +6,8 @@ export const ThemeSwitch: React.FC = () => {
   const [theme, setTheme] = useState<"obsidian" | "default">("obsidian");
 
   useEffect(() => {
-    const saved = localStorage.getItem("workhorse_theme") as "obsidian" | "default" | null;
+    const saved = localStorage.getItem("workhorse_theme") as
+      "obsidian" | "default" | null;
     if (saved) {
       setTheme(saved);
       document.documentElement.setAttribute("data-theme", saved);
@@ -35,9 +36,7 @@ export const ThemeSwitch: React.FC = () => {
           backgroundColor: theme === "obsidian" ? "#FFB000" : "#10b981",
         }}
       />
-      <span>
-        {theme === "obsidian" ? "Obsidian & Neon" : "Cyberpunk"}
-      </span>
+      <span>{theme === "obsidian" ? "Obsidian & Neon" : "Cyberpunk"}</span>
     </button>
   );
 };

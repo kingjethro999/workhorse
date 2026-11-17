@@ -4,8 +4,19 @@
 # =============================================================================
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
 LOCAL_BIN="$HOME/.local/bin"
+
+if [ ! -f "$SCRIPT_DIR/workhorse.py" ]; then
+    INSTALL_TARGET="$HOME/.workhorse"
+    echo "[*] Cloning Workhorse repository to $INSTALL_TARGET..."
+    if [ -d "$INSTALL_TARGET" ]; then
+        (cd "$INSTALL_TARGET" && git pull 2>/dev/null || true)
+    else
+        git clone https://github.com/kingjethro999/workhorse.git "$INSTALL_TARGET"
+    fi
+    SCRIPT_DIR="$INSTALL_TARGET"
+fi
 
 echo "=== Installing Workhorse Workstation (Tri-Alias: workhorse, workhouse, wh) ==="
 

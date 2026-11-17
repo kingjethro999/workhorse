@@ -1,7 +1,14 @@
 # =============================================================================
 # Workhorse Windows PowerShell Universal Setup Script
 # =============================================================================
-$InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$InstallDir = if ($MyInvocation.MyCommand.Path) { Split-Path -Parent $MyInvocation.MyCommand.Path } else { $null }
+if (-not $InstallDir -or -not (Test-Path (Join-Path $InstallDir "workhorse.py"))) {
+    $InstallDir = Join-Path $env:USERPROFILE "workhorse"
+    if (-not (Test-Path $InstallDir)) {
+        Write-Host "[*] Cloning Workhorse repository to $InstallDir..." -ForegroundColor Cyan
+        git clone https://github.com/kingjethro999/workhorse.git $InstallDir
+    }
+}
 $VenvPython = Join-Path $InstallDir ".venv\Scripts\python.exe"
 $MainScript = Join-Path $InstallDir "workhorse.py"
 

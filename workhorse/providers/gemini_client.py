@@ -19,7 +19,7 @@ class GeminiProvider(BaseProvider):
             raise ValueError("GEMINI_API_KEY not configured.")
         target = model or Config.GEMINI_MODEL
         prompt = "\n\n".join(f"{m['role'].upper()}: {m['content']}" for m in messages)
-        resp = self.client.models.generate_content(model=target, contents=prompt)
+        resp = await self.client.aio.models.generate_content(model=target, contents=prompt)
         text = resp.text or ""
         return ProviderResponse(
             content=text,
@@ -33,6 +33,7 @@ class GeminiProvider(BaseProvider):
             raise ValueError("GEMINI_API_KEY not configured.")
         target = model or Config.GEMINI_MODEL
         prompt = "\n\n".join(f"{m['role'].upper()}: {m['content']}" for m in messages)
-        for chunk in self.client.models.generate_content_stream(model=target, contents=prompt):
+        stream_resp = await self.client.aio.models.generate_content_stream(model=target, contents=prompt)
+        async for chunk in stream_resp:
             if chunk.text:
                 yield chunk.text

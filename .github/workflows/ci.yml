@@ -2,10 +2,10 @@ name: Workhorse CI/CD & Automated Release
 
 on:
   push:
-    branches: [ "main" ]
-    tags: [ "v*" ]
+    branches: ["main"]
+    tags: ["v*"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Test Suite
         run: |
-          pytest tests/test_file_crud.py tests/test_router.py tests/test_skills_mcp.py tests/test_version_bumper.py
+          pytest
 
   build-and-release:
     name: Package Bundle & GitHub Release

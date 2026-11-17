@@ -72,6 +72,18 @@ def bump_all_files(repo_root: Path) -> tuple[str, str]:
         else:
             init_file.write_text(f'__version__ = "{next_version}"\n' + init_content, encoding="utf-8")
 
+    # 4. Update web/package.json if present
+    web_pkg = repo_root / "web" / "package.json"
+    if web_pkg.exists():
+        pkg_content = web_pkg.read_text(encoding="utf-8")
+        new_pkg = re.sub(
+            r'"version"\s*:\s*"[^"]+"',
+            f'"version": "{next_version}"',
+            pkg_content,
+            count=1
+        )
+        web_pkg.write_text(new_pkg, encoding="utf-8")
+
     return current_version, next_version
 
 if __name__ == "__main__":

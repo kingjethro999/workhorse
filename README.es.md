@@ -30,7 +30,7 @@
 ### Directivas Principales
 
 1. **Invocación Universal mediante Tres Alias:**
-   Ejecutable desde *cualquier* directorio del sistema operativo mediante `workhorse`, `workhouse` o `wh`. Sin argumentos abre la interfaz gráfica de terminal (TUI) a pantalla completa anclada al directorio actual. Con argumentos o tuberías opera en modo CLI sin cabeza.
+   Ejecutable desde _cualquier_ directorio del sistema operativo mediante `workhorse`, `workhouse` o `wh`. Sin argumentos abre la interfaz gráfica de terminal (TUI) a pantalla completa anclada al directorio actual. Con argumentos o tuberías opera en modo CLI sin cabeza.
 
 2. **Operador Activo del Repositorio de Trabajo (Sin Sandboxing Restrictivo):**
    Workhorse NO aísla sus operaciones en una caja de arena artificial. Al invocarse en una carpeta de proyecto, inspecciona el repositorio, procesa archivos por fragmentos y realiza modificaciones en el lugar con copias de seguridad automáticas en `.workhorse_backups/`.
@@ -47,25 +47,27 @@
 
 Workhorse incluye un selector de tema integrado disponible tanto en la terminal (pulsando `F7`) como en la interfaz web:
 
-| Rol | Nombre del Color | Código Hex | Propósito y Estética |
-| :--- | :--- | :--- | :--- |
-| **Fondo Principal** | **OLED Obsidian** | `#08090A` | Lienzo negro profundo diseñado para alto contraste. |
-| **Superficie / Paneles** | **Gunmetal Gray** | `#141619` | Elevación sutil para tarjetas, registros y ventanas. |
-| **Acento de Marca (Local)** | **Terminal Amber** | `#FFB000` | Tono ámbar clásico CRT que indica ejecución local rápida. |
-| **Acento de Poder (Nube)** | **Electric Cobalt** | `#2563EB` | Azul de alto voltaje para razonamiento profundo en la nube. |
-| **Estado / Éxito** | **Matrix Emerald** | `#10B981` | Indicador de herramientas web activas y tokens correctos. |
-| **Tipografía / Texto** | **Platinum White** | `#F3F4F6` | Blanco roto de alta legibilidad para reducir la fatiga visual. |
+| Rol                         | Nombre del Color    | Código Hex | Propósito y Estética                                           |
+| :-------------------------- | :------------------ | :--------- | :------------------------------------------------------------- |
+| **Fondo Principal**         | **OLED Obsidian**   | `#08090A`  | Lienzo negro profundo diseñado para alto contraste.            |
+| **Superficie / Paneles**    | **Gunmetal Gray**   | `#141619`  | Elevación sutil para tarjetas, registros y ventanas.           |
+| **Acento de Marca (Local)** | **Terminal Amber**  | `#FFB000`  | Tono ámbar clásico CRT que indica ejecución local rápida.      |
+| **Acento de Poder (Nube)**  | **Electric Cobalt** | `#2563EB`  | Azul de alto voltaje para razonamiento profundo en la nube.    |
+| **Estado / Éxito**          | **Matrix Emerald**  | `#10B981`  | Indicador de herramientas web activas y tokens correctos.      |
+| **Tipografía / Texto**      | **Platinum White**  | `#F3F4F6`  | Blanco roto de alta legibilidad para reducir la fatiga visual. |
 
 ---
 
 ## Instalación Rápida
 
 ### Linux y macOS (Una sola línea)
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.sh | bash
 ```
 
 ### Windows PowerShell
+
 ```powershell
 irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 | iex
 ```
@@ -73,6 +75,7 @@ irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 |
 ---
 
 ## Atajos de Teclado en la TUI
+
 - `F1`: Ayuda y documentación
 - `F2`: Cambiar modo (`auto:auto`, `local`, `groq`, `nvidia`, `gemini`, `openrouter`)
 - `F3`: Activar/desactivar búsqueda web

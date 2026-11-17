@@ -88,7 +88,9 @@ class WorkhorseApp(App):
         yield Footer()
 
     async def on_mount(self) -> None:
-        self.ollama_online = self.runtime.ollama.get_status()["online"]
+        loop = asyncio.get_running_loop()
+        status = await loop.run_in_executor(None, self.runtime.ollama.get_status)
+        self.ollama_online = status.get("online", False)
         self.update_title()
 
     def update_title(self) -> None:
@@ -212,10 +214,11 @@ class WorkhorseApp(App):
                 use_web=self.use_web,
                 on_thought=on_thought
             )
-            meta = f"{res['provider'].upper()} | {res['model']} | Cycle {res['cycle']}"
-            chat.mount(MessageBubble("Agent", res["content"], meta=meta))
+            provider = res.get("provider", "local")
+            meta = f"{provider.upper()} | {res['model']} | Cycle {res['cycle']}"
+            chat.mount(MessageBubble("Agent", res["content"], meta=meta, provider=provider))
             accordion.title = "Reasoning & Chunk Progress (Completed)"
-            accordion.refresh()
+            accordion.set_provider(provider)
             tree.reload()
         except Exception as e:
             accordion.title = "Reasoning & Chunk Progress (Failed)"

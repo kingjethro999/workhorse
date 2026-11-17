@@ -97,6 +97,7 @@ class HelpModal(ModalScreen):
                 yield Label("• F4          : Open Model Selection Picker")
                 yield Label("• F5          : Clear active chat conversation")
                 yield Label("• F6          : Cross-Agent Skills & Universal MCP Hub")
+                yield Label("• F7          : Toggle Theme (Obsidian & Neon Industrial)")
                 yield Label("• Ctrl+B      : Toggle Sidebar Directory Explorer")
                 yield Label("• Tab         : Cycle focus between Tree, Chat Log, and Input")
                 yield Label("• Enter       : Submit prompt to runtime")

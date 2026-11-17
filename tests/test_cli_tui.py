@@ -8,7 +8,7 @@ from workhorse.cli import run_cli
 
 def test_cli_default_launches_tui():
     with patch("sys.argv", ["workhorse"]), patch("sys.stdin.isatty", return_value=True):
-        with patch("app.WorkhorseApp") as MockApp:
+        with patch("workhorse.cli.WorkhorseApp") as MockApp:
             mock_instance = MagicMock()
             MockApp.return_value = mock_instance
             
@@ -19,7 +19,7 @@ def test_cli_default_launches_tui():
 
 def test_cli_tui_flag_launches_tui():
     with patch("sys.argv", ["wh", "-t"]), patch("sys.stdin.isatty", return_value=True):
-        with patch("app.WorkhorseApp") as MockApp:
+        with patch("workhorse.cli.WorkhorseApp") as MockApp:
             mock_instance = MagicMock()
             MockApp.return_value = mock_instance
             
@@ -27,6 +27,15 @@ def test_cli_tui_flag_launches_tui():
             
             MockApp.assert_called_once()
             mock_instance.run.assert_called_once()
+
+def test_cli_version_flag(capsys):
+    import pytest
+    with patch("sys.argv", ["wh", "--version"]):
+        with pytest.raises(SystemExit) as exc_info:
+            run_cli()
+        assert exc_info.value.code == 0
+        captured = capsys.readouterr()
+        assert "workhorse 0.0.1" in captured.out or "workhorse 0.0.1" in captured.err
 
 def test_cli_piped_input_executes_prompt():
     fake_stdin = io.StringIO("secret_token_1234")

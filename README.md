@@ -30,7 +30,7 @@
 ### Core Directives
 
 1. **Zero-Friction Terminal Ubiquity & Tri-Alias Invocation:**
-   Executable from *any* directory on the operating system via `workhorse`, `workhouse`, or `wh`. Invoking without arguments enters the full-screen Textual Terminal GUI (TUI), anchored directly to the user's active directory. Passing arguments, flags, or pipes immediately executes in headless CLI mode.
+   Executable from _any_ directory on the operating system via `workhorse`, `workhouse`, or `wh`. Invoking without arguments enters the full-screen Textual Terminal GUI (TUI), anchored directly to the user's active directory. Passing arguments, flags, or pipes immediately executes in headless CLI mode.
 
 2. **Active Working Repository Operator (No Restrictive Sandboxing):**
    Workhorse does NOT trap operations in an isolated sandbox. When invoked in any project folder, it has authority to inspect the repository, read source files in chunks, and actively edit files in-place with automatic safety backups stored in `.workhorse_backups/`.
@@ -47,14 +47,14 @@
 
 Workhorse includes a built-in theme switch available in both the Terminal GUI (press `F7`) and the Web Interface:
 
-| Role | Color Name | Hex Code | Aesthetic & Functional Vibe |
-| :--- | :--- | :--- | :--- |
-| **Primary / Background** | **OLED Obsidian** | `#08090A` | Deep, true-black canvas designed for high-contrast focus. |
-| **Surface / Containers** | **Gunmetal Gray** | `#141619` | Subtle elevation for cards, logs, and terminal window panes. |
-| **Brand Accent (Fast/Local)** | **Terminal Amber** | `#FFB000` | Classic amber CRT tone signaling fast, local execution. |
+| Role                          | Color Name          | Hex Code  | Aesthetic & Functional Vibe                                            |
+| :---------------------------- | :------------------ | :-------- | :--------------------------------------------------------------------- |
+| **Primary / Background**      | **OLED Obsidian**   | `#08090A` | Deep, true-black canvas designed for high-contrast focus.              |
+| **Surface / Containers**      | **Gunmetal Gray**   | `#141619` | Subtle elevation for cards, logs, and terminal window panes.           |
+| **Brand Accent (Fast/Local)** | **Terminal Amber**  | `#FFB000` | Classic amber CRT tone signaling fast, local execution.                |
 | **Power Accent (Cloud/Exec)** | **Electric Cobalt** | `#2563EB` | High-voltage blue representing deep cloud reasoning and heavy lifting. |
-| **Success / Live Status** | **Matrix Emerald** | `#10B981` | Clean indicator for active web intelligence and successful tokens. |
-| **Typography / Text** | **Platinum White** | `#F3F4F6` | High-legibility off-white reducing eye strain during long sessions. |
+| **Success / Live Status**     | **Matrix Emerald**  | `#10B981` | Clean indicator for active web intelligence and successful tokens.     |
+| **Typography / Text**         | **Platinum White**  | `#F3F4F6` | High-legibility off-white reducing eye strain during long sessions.    |
 
 The dual-engine signal uses **Terminal Amber** for local tasks and **Electric Cobalt** for cloud routing, creating an instant visual cue of where compute is happening.
 
@@ -63,16 +63,19 @@ The dual-engine signal uses **Terminal Amber** for local tasks and **Electric Co
 ## Quick Start & Installation
 
 ### One-Line Install (Linux / macOS)
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.sh | bash
 ```
 
 ### Windows PowerShell
+
 ```powershell
 irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 | iex
 ```
 
 ### Manual Setup
+
 ```bash
 git clone https://github.com/kingjethro999/workhorse.git
 cd workhorse
@@ -86,7 +89,9 @@ pip install -e .
 ## Usage
 
 ### Interactive Terminal GUI (TUI)
+
 Simply run any of the aliases in your target repository:
+
 ```bash
 wh
 # or
@@ -96,6 +101,7 @@ workhouse
 ```
 
 #### TUI Keyboard Shortcuts
+
 - `F1`: Help & Documentation
 - `F2`: Cycle Execution Mode (`auto:auto`, `local`, `groq`, `nvidia`, `gemini`, `openrouter`)
 - `F3`: Toggle Live Web Intelligence (Firecrawl, Jina, Tavily, You.com)
@@ -107,6 +113,7 @@ workhouse
 - `Ctrl+Q`: Quit
 
 ### Headless CLI Mode
+
 ```bash
 # Execute prompt in current directory
 wh "explain this repository architecture"
@@ -123,6 +130,7 @@ cat main.py | wh "optimize performance and add type hints"
 ## Web Showcase Interface
 
 Workhorse features a public product portal in `/web` built with Next.js, Tailwind CSS, and Three.js/Canvas:
+
 - Interactive Cybernetic Workhorse mascot with kinetic trots and WCAG 2.2.2 pause/play control.
 - Live Terminal Simulator replay.
 - One-Click Installation Bar.
@@ -130,6 +138,7 @@ Workhorse features a public product portal in `/web` built with Next.js, Tailwin
 - Built-in theme switcher matching the Obsidian &amp; Neon Industrial identity.
 
 To launch the web interface:
+
 ```bash
 cd web
 zyrk install
@@ -141,11 +150,13 @@ npm run dev
 ## Git Commit Version Bumper Hook
 
 Workhorse comes with an automated commit version bumper:
+
 - Normal commit: bumps patch (+0.0.1)
 - On every `x.x.9`: rolls over to `x.(x+1).0`
 - On every `x.599.9`: rolls over to `(x+1).0.0`
 
 Install the hook:
+
 ```bash
 cp scripts/git-hooks/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit

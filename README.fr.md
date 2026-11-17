@@ -30,7 +30,7 @@
 ### Directives Fondamentales
 
 1. **Ubiquité Terminale et Invocation par Trois Alias :**
-   Exécutable depuis *n'importe quel* répertoire via `workhorse`, `workhouse` ou `wh`. Lancé sans argument, il démarre l'interface graphique de terminal (TUI) plein écran Textual, ancrée dans le répertoire courant. Avec des arguments ou des flux redirigés, il bascule instantanément en mode CLI direct.
+   Exécutable depuis _n'importe quel_ répertoire via `workhorse`, `workhouse` ou `wh`. Lancé sans argument, il démarre l'interface graphique de terminal (TUI) plein écran Textual, ancrée dans le répertoire courant. Avec des arguments ou des flux redirigés, il bascule instantanément en mode CLI direct.
 
 2. **Opérateur Actif sur le Dépôt de Travail :**
    Workhorse ne s'enferme pas dans un bac à sable artificiel. Il inspecte directement les sources, analyse l'AST et modifie les fichiers sur place avec des sauvegardes automatiques dans `.workhorse_backups/`.
@@ -47,25 +47,27 @@
 
 Workhorse propose un basculement de thème natif dans le terminal (`F7`) et sur l'interface Web :
 
-| Rôle | Nom de Couleur | Code Hex | Intention et Rendu Visuel |
-| :--- | :--- | :--- | :--- |
-| **Arrière-plan Principal** | **OLED Obsidian** | `#08090A` | Toile noire pure conçue pour un contraste élevé. |
-| **Surfaces et Panneaux** | **Gunmetal Gray** | `#141619` | Élévation subtile pour cartes, fenêtres et journaux. |
-| **Accent Local** | **Terminal Amber** | `#FFB000` | Ambre CRT rétro signalant une exécution locale rapide. |
-| **Accent Cloud** | **Electric Cobalt** | `#2563EB` | Bleu haute tension pour le raisonnement approfondi dans le cloud. |
-| **Statut et Succès** | **Matrix Emerald** | `#10B981` | Vert émeraude pour la recherche web et les tokens validés. |
-| **Typographie** | **Platinum White** | `#F3F4F6` | Blanc cassé assurant une lisibilité maximale sans fatigue. |
+| Rôle                       | Nom de Couleur      | Code Hex  | Intention et Rendu Visuel                                         |
+| :------------------------- | :------------------ | :-------- | :---------------------------------------------------------------- |
+| **Arrière-plan Principal** | **OLED Obsidian**   | `#08090A` | Toile noire pure conçue pour un contraste élevé.                  |
+| **Surfaces et Panneaux**   | **Gunmetal Gray**   | `#141619` | Élévation subtile pour cartes, fenêtres et journaux.              |
+| **Accent Local**           | **Terminal Amber**  | `#FFB000` | Ambre CRT rétro signalant une exécution locale rapide.            |
+| **Accent Cloud**           | **Electric Cobalt** | `#2563EB` | Bleu haute tension pour le raisonnement approfondi dans le cloud. |
+| **Statut et Succès**       | **Matrix Emerald**  | `#10B981` | Vert émeraude pour la recherche web et les tokens validés.        |
+| **Typographie**            | **Platinum White**  | `#F3F4F6` | Blanc cassé assurant une lisibilité maximale sans fatigue.        |
 
 ---
 
 ## Installation Rapide
 
 ### Linux et macOS
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.sh | bash
 ```
 
 ### Windows PowerShell
+
 ```powershell
 irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 | iex
 ```
@@ -73,6 +75,7 @@ irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 |
 ---
 
 ## Raccourcis Clavier Principaux (TUI)
+
 - `F1` : Aide et documentation
 - `F2` : Changer de mode d'exécution
 - `F3` : Activer/désactiver la recherche web

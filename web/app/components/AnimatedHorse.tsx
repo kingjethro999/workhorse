@@ -9,7 +9,9 @@ interface HorseProps {
 export const AnimatedHorse: React.FC<HorseProps> = ({ interactive = true }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [activeTier, setActiveTier] = useState<string>("Local Ollama (Emerald)");
+  const [activeTier, setActiveTier] = useState<string>(
+    "Local Ollama (Emerald)",
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -166,7 +168,7 @@ export const AnimatedHorse: React.FC<HorseProps> = ({ interactive = true }) => {
           mx - 20 + Math.sin(t * 2 + m) * 6,
           my - 15,
           mx - 35,
-          my + 5
+          my + 5,
         );
         ctx.stroke();
       }
@@ -177,7 +179,14 @@ export const AnimatedHorse: React.FC<HorseProps> = ({ interactive = true }) => {
       const coreX = cx + 10;
       const coreY = cy + bob + 5;
 
-      const gradient = ctx.createRadialGradient(coreX, coreY, 2, coreX, coreY, coreRadius * 2);
+      const gradient = ctx.createRadialGradient(
+        coreX,
+        coreY,
+        2,
+        coreX,
+        coreY,
+        coreRadius * 2,
+      );
       gradient.addColorStop(0, "rgba(16, 185, 129, 0.95)");
       gradient.addColorStop(0.5, "rgba(37, 99, 235, 0.5)");
       gradient.addColorStop(1, "rgba(16, 185, 129, 0)");

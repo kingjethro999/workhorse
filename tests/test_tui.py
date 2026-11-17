@@ -7,8 +7,9 @@ from workhorse.tui.widgets import ThoughtAccordion, MessageBubble, StatusBadge, 
 from workhorse.tui.app import WorkhorseApp
 
 def test_thought_accordion():
-    accordion = ThoughtAccordion(title="Test Reasoning")
+    accordion = ThoughtAccordion(title="Test Reasoning", provider="local")
     assert accordion.expanded is True
+    assert accordion.provider == "local"
     accordion.add_thought("step 1: reading files")
     assert len(accordion.thoughts) == 1
     assert "step 1: reading files" in accordion.thoughts[0]
@@ -16,13 +17,21 @@ def test_thought_accordion():
     accordion.toggle()
     assert accordion.expanded is False
 
+    # Check auto-detection of cloud provider from thought line
+    accordion.add_thought("[*] Attempting execution on [GROQ: gpt-oss-120b]")
+    assert accordion.provider == "cloud"
+
 def test_message_bubble():
     user_bubble = MessageBubble("User", "Hello there")
     assert user_bubble.sender == "User"
 
-    agent_bubble = MessageBubble("Agent", "Hello back", meta="GROQ | cycle 1")
+    agent_bubble = MessageBubble("Agent", "Hello back", meta="GROQ | cycle 1", provider="groq")
     assert agent_bubble.sender == "Agent"
     assert "GROQ" in agent_bubble.meta
+    assert agent_bubble.provider == "groq"
+
+    local_bubble = MessageBubble("Agent", "Local response", meta="LOCAL | llama3.2:1b", provider="local")
+    assert local_bubble.provider == "local"
 
 @pytest.mark.asyncio
 async def test_app_mounting(tmp_path):

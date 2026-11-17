@@ -149,12 +149,13 @@
 ## 1. Executive Overview & Architectural Philosophy
 
 ### 1.1 Vision and Core Directives
+
 Workhorse is an enterprise-grade hybrid AI workstation designed to run directly inside the Linux/macOS terminal. It integrates local on-device neural processing (Ollama) with cloud intelligence clusters (Groq LPUs, Nvidia NIM, Google Gemini 2.5, OpenRouter), augmented by live multi-engine web research (Firecrawl, Jina AI, Tavily, You.com) and deep observability (Langfuse).
 
 Workhorse operates under four non-negotiable core directives:
 
 1. **Zero-Friction Terminal Ubiquity & Tri-Alias Invocation:**
-   Workhorse is executable from *any* directory on the operating system via `workhorse`, `workhouse`, or `wh`. Invoking without arguments instantly enters the full-screen Textual Terminal GUI (TUI), anchored directly to the user's active directory. Passing arguments, flags, or pipes immediately executes in headless CLI mode.
+   Workhorse is executable from _any_ directory on the operating system via `workhorse`, `workhouse`, or `wh`. Invoking without arguments instantly enters the full-screen Textual Terminal GUI (TUI), anchored directly to the user's active directory. Passing arguments, flags, or pipes immediately executes in headless CLI mode.
 
 2. **Active Working Repository Operator (No Restrictive Sandboxing):**
    Workhorse does NOT trap operations in an isolated sandbox. When invoked in `~/Desktop/promptdock` or any project folder, it possesses full authority to inspect the repository, read source files in chunks, and actively edit files (e.g. "tell me about this repo", "edit readme, make it more detailed"). It creates safe atomic backups in `.workhorse_backups/`, but performs real in-place modifications as requested.
@@ -229,6 +230,7 @@ Workhorse operates under four non-negotiable core directives:
 ```
 
 ### 1.3 Key Architectural Tenets
+
 - **Active Working Repository Operator:** Workhorse is explicitly designed to inspect, manipulate, refactor, and mutate files directly inside the active workspace where it was invoked. It does not isolate operations in an artificial sandbox.
 - **Chunked Ingestion and Mutation:** Every repository traversal and file read/write operation is segmented into bounded chunks to respect context token limits and ensure zero out-of-memory errors.
 - **Fail-Safe Resilience Ring:** Single-model failures, API timeouts, and HTTP 429 rate limits are handled transparently by traversing the circular provider chain up to 5 full times.
@@ -236,39 +238,45 @@ Workhorse operates under four non-negotiable core directives:
 
 ### 1.4 Architectural Comparisons & Benchmarks
 
-| Feature / Metric | Workhorse v3.0 | Generic Terminal Wrappers | Cloud-Only Coding Agents | Local-Only Tools |
-| :--- | :--- | :--- | :--- | :--- |
-| **Global Calling Aliases** | `workhorse`, `workhouse`, `wh` | Single alias | CLI or IDE plugin | Single script name |
-| **Workspace Context Rooting** | Caller `$PWD` dynamically resolved | Often locked to script dir | Cloud workspace copy | Local dir |
-| **Local Offline Support** | Native Ollama auto-discovery | None | None | 100% local only |
-| **Failure Tolerance** | 5-Cycle Model Ring (25+ retries) | Fails on first error | Fails on API rate limit | Fails on OOM |
-| **File CRUD Operation** | Full In-TUI Tree + Editor + In-Place Edits | Read-only CLI dumps | Restricted staging sandbox | Basic file write |
-| **Reasoning Visibility** | Live Streaming `ThoughtAccordion` | Static spinner / dots | Opaque loading state | Terminal stdout dump |
-| **Web Research Suite** | Firecrawl, Jina, Tavily, You.com | Single search tool | Vendor internal search | None |
-| **Observability** | Native Langfuse integration | None | Proprietary cloud log | Local log file |
+| Feature / Metric              | Workhorse v3.0                             | Generic Terminal Wrappers  | Cloud-Only Coding Agents   | Local-Only Tools     |
+| :---------------------------- | :----------------------------------------- | :------------------------- | :------------------------- | :------------------- |
+| **Global Calling Aliases**    | `workhorse`, `workhouse`, `wh`             | Single alias               | CLI or IDE plugin          | Single script name   |
+| **Workspace Context Rooting** | Caller `$PWD` dynamically resolved         | Often locked to script dir | Cloud workspace copy       | Local dir            |
+| **Local Offline Support**     | Native Ollama auto-discovery               | None                       | None                       | 100% local only      |
+| **Failure Tolerance**         | 5-Cycle Model Ring (25+ retries)           | Fails on first error       | Fails on API rate limit    | Fails on OOM         |
+| **File CRUD Operation**       | Full In-TUI Tree + Editor + In-Place Edits | Read-only CLI dumps        | Restricted staging sandbox | Basic file write     |
+| **Reasoning Visibility**      | Live Streaming `ThoughtAccordion`          | Static spinner / dots      | Opaque loading state       | Terminal stdout dump |
+| **Web Research Suite**        | Firecrawl, Jina, Tavily, You.com           | Single search tool         | Vendor internal search     | None                 |
+| **Observability**             | Native Langfuse integration                | None                       | Proprietary cloud log      | Local log file       |
 
 ---
 
 ## 2. Universal Global Access & PC-Wide Execution Architecture
 
 ### 2.1 The Global Execution Problem & Context Anchoring
+
 When a developer enters `~/Desktop/promptdock` and executes `wh`, the tool must fulfill three core requirements:
+
 1. **Isolated Virtualenv Resolution:** Always execute with the dedicated virtualenv at `/home/japheth/Desktop/workhouse/.venv/bin/python`, ensuring zero dependency conflicts with global system Python.
 2. **Context-Aware Working Directory Rooting:** Dynamically capture caller directory via `$PWD` and export `WORKHORSE_INVOCATION_CWD`. The file tree, agent tools, and chunking engines immediately root themselves in `~/Desktop/promptdock`.
 3. **Tri-Alias Recognition:** All three aliases (`workhorse`, `workhouse`, `wh`) must execute identically across all shells (Bash, Zsh, Fish).
 
 ### 2.2 Tri-Alias Launcher Specification
+
 - **Primary Executable:** `~/.local/bin/workhorse` (marked `chmod +x`).
 - **Symlink 1:** `~/.local/bin/workhouse` -> `~/.local/bin/workhorse`.
 - **Symlink 2:** `~/.local/bin/wh` -> `~/.local/bin/workhorse`.
 - **PATH Check:** `~/.local/bin` is verified in `$PATH`.
 
 ### 2.3 Real Active Working Repository Operations (No Artificial Sandboxing)
+
 Unlike sandbox-confined chat tools that refuse to touch local directories, Workhorse is designed as a direct repository engineer:
+
 - **"Tell me about this repo":** Scans files in the caller's working directory, chunks the directory tree and key files (`README.md`, `package.json`, `pyproject.toml`, source headers), and synthesizes a complete architectural summary.
 - **"Edit readme, make it more detailed":** Reads the existing `README.md` in chunks, drafts comprehensive technical documentation, and writes the updated contents directly back to `README.md` in place, generating a safety backup in `.workhorse_backups/README.md.<timestamp>.bak`.
 
 ### 2.4 POSIX Shell Wrapper Implementation
+
 ```bash
 #!/usr/bin/env bash
 # =============================================================================
@@ -294,6 +302,7 @@ exec "$VENV_PYTHON" "$MAIN_SCRIPT" "$@"
 ```
 
 ### 2.5 Windows PowerShell & Cross-Platform Packaging (`install.ps1`)
+
 ```powershell
 # =============================================================================
 # Workhorse Windows PowerShell Universal Setup Script
@@ -333,12 +342,15 @@ Write-Host "[SUCCESS] Workhorse installed as 'workhorse', 'workhouse', and 'wh' 
 ## 3. The `auto:auto` Dynamic Routing & 5-Cycle Resilience Ring
 
 ### 3.1 Dynamic Local Ollama Auto-Discovery
+
 Upon initialization, Workhorse executes a non-blocking asynchronous probe against `http://127.0.0.1:11434/api/tags`.
+
 - Discovers installed models (e.g., `llama3.2:1b`, `deepseek-v4.1-flash:cloud`, `qwen3-vl:4b`).
 - Categorizes capabilities (fast micro-text, code synthesis, visual-language).
 - If Ollama is running, local models form Tier-0 (Zero Cost, Zero Cloud Latency).
 
 ### 3.2 Task Complexity & Semantic Classification Heuristics
+
 ```python
 def classify_task_heuristics(prompt: str, attached_files: list[str], force_web: bool) -> dict[str, Any]:
     """
@@ -347,7 +359,7 @@ def classify_task_heuristics(prompt: str, attached_files: list[str], force_web: 
     """
     word_count = len(prompt.split())
     has_images = bool(attached_files and any(f.lower().endswith((".png", ".jpg", ".jpeg", ".webp")) for f in attached_files))
-    
+
     code_keywords = [
         "def ", "class ", "import ", "function", "async ", "await", "refactor",
         "bug", "traceback", "exception", "regex", "sql", "table", "schema",
@@ -387,6 +399,7 @@ def classify_task_heuristics(prompt: str, attached_files: list[str], force_web: 
 ```
 
 ### 3.3 The 5-Cycle Model Resilience Ring Protocol (Zero Fast-Failures)
+
 Workhorse introduces an uncompromising resilience protocol: **Never Return Failed Prematurely**.
 The runtime arranges configured providers into an ordered circular ring:
 
@@ -397,6 +410,7 @@ The runtime arranges configured providers into an ordered circular ring:
 ```
 
 #### Ring Execution Rules:
+
 1. When a task is dispatched, the router picks the optimal starting provider based on task complexity.
 2. If the chosen provider fails (HTTP 429 rate limit, 500 server error, connection reset, OOM, timeout, or context limit), the engine automatically captures the error, logs a telemetry span, and hands the task over to the next provider in the ring.
 3. If all providers in the ring are traversed without success, the engine increments the **Cycle Counter** (e.g. `Cycle 2 of 5`). It applies an exponential jitter backoff (`1s * (1.5 ^ cycle)`), reformulates the prompt context if necessary, and repeats the entire ring.
@@ -404,7 +418,9 @@ The runtime arranges configured providers into an ordered circular ring:
 5. If after 5 complete cycles (25+ attempted dispatches across all endpoints) the request cannot be fulfilled, Workhorse returns a structured diagnostic report explaining each failure along the path.
 
 ### 3.4 Transparent Offline & Network Disconnection Handling
+
 If the host system loses internet connectivity or cloud APIs are blocked by a captive portal or firewall:
+
 1. The connection probe instantly detects the offline state.
 2. The runtime does NOT throw an unhandled exception or enter an infinite spinning state.
 3. It emits a transparent notification in the TUI:
@@ -415,21 +431,22 @@ If the host system loses internet connectivity or cloud APIs are blocked by a ca
 
 ### 3.5 Multi-Tier Handover Decision Matrix
 
-| Task Characteristics | Network Status | Primary Target | Handover Fallback Tier | Web Intelligence |
-| :--- | :--- | :--- | :--- | :--- |
-| **Micro-Task (< 25 words)** | Any | **Local Ollama** (`llama3.2:1b`) | Groq LPU (`gpt-oss-120b`) | Disabled |
-| **Repo Summary / Architecture** | Online | **Groq LPU** or **Gemini Flash** | Nvidia NIM -> OpenRouter | Optional |
-| **Repo Summary / Architecture** | Offline | **Local Ollama** (`qwen3-vl:4b` / 1b) | Local Ollama (chunked) | Disabled (offline) |
-| **Code Refactor / File Edit** | Online | **Groq LPU** (`gpt-oss-120b`) | Nvidia Nemotron -> Gemini | Optional |
-| **Multi-File / Deep Context** | Online | **Google Gemini** (`gemini-2.5-flash`) | OpenRouter (`glm-5.3-prime`) | Optional |
-| **Live Knowledge / News** | Online | **Tavily / Jina / Firecrawl** -> **Groq** | Gemini -> OpenRouter | **Mandatory** |
-| **Network Outage Detected** | **Offline** | **Local Ollama** (`llama3.2:1b`) | Local alternative models | Auto-disabled |
+| Task Characteristics            | Network Status | Primary Target                            | Handover Fallback Tier       | Web Intelligence   |
+| :------------------------------ | :------------- | :---------------------------------------- | :--------------------------- | :----------------- |
+| **Micro-Task (< 25 words)**     | Any            | **Local Ollama** (`llama3.2:1b`)          | Groq LPU (`gpt-oss-120b`)    | Disabled           |
+| **Repo Summary / Architecture** | Online         | **Groq LPU** or **Gemini Flash**          | Nvidia NIM -> OpenRouter     | Optional           |
+| **Repo Summary / Architecture** | Offline        | **Local Ollama** (`qwen3-vl:4b` / 1b)     | Local Ollama (chunked)       | Disabled (offline) |
+| **Code Refactor / File Edit**   | Online         | **Groq LPU** (`gpt-oss-120b`)             | Nvidia Nemotron -> Gemini    | Optional           |
+| **Multi-File / Deep Context**   | Online         | **Google Gemini** (`gemini-2.5-flash`)    | OpenRouter (`glm-5.3-prime`) | Optional           |
+| **Live Knowledge / News**       | Online         | **Tavily / Jina / Firecrawl** -> **Groq** | Gemini -> OpenRouter         | **Mandatory**      |
+| **Network Outage Detected**     | **Offline**    | **Local Ollama** (`llama3.2:1b`)          | Local alternative models     | Auto-disabled      |
 
 ---
 
 ## 4. Chunked File Engine & Active Repository Mutation
 
 ### 4.1 The Chunked Ingestion Architecture (`read_file_chunks`)
+
 To prevent token context exhaustion and buffer overflows when analyzing large repositories or files, Workhorse ingests files in bounded, deterministic chunks.
 
 ```python
@@ -438,7 +455,7 @@ def read_file_chunks(file_path: Path, chunk_size_lines: int = 200) -> list[dict[
     chunks = []
     with open(file_path, "r", encoding="utf-8", errors="replace") as f:
         lines = f.readlines()
-    
+
     total_lines = len(lines)
     for i in range(0, total_lines, chunk_size_lines):
         chunk_lines = lines[i:i + chunk_size_lines]
@@ -453,20 +470,26 @@ def read_file_chunks(file_path: Path, chunk_size_lines: int = 200) -> list[dict[
 ```
 
 ### 4.2 In-Place Chunked File Editing & Hunk Patching (`edit_file_chunk`)
+
 When the user requests an edit (e.g. "make readme more detailed" or "refactor function in db.py"):
+
 1. The engine reads the target file and calculates chunk boundaries.
 2. The agent produces targeted hunk replacements or full chunk rewrites.
 3. The engine creates an atomic timestamped backup: `.workhorse_backups/<filename>.<timestamp>.bak`.
 4. The file is rewritten in place atomically using sibling temporary file replacement (`os.replace`).
 
 ### 4.3 Recursive Repository Tree Chunking (`stream_repo_chunks`)
+
 When analyzing an entire repository (e.g. "tell me about this repo"):
+
 - Workhorse traverses the directory tree while ignoring `.git/`, `.venv/`, `node_modules/`, `__pycache__/`, and `.workhorse_backups/`.
 - It builds a compact structural map of all file paths, sizes, and extensions.
 - It selects high-signal files (`README.md`, `pyproject.toml`, `package.json`, entrypoint files, config headers) and streams them in prioritized chunks to the model.
 
 ### 4.4 Atomic File Writing & Non-Destructive Backup Preservation
+
 Every file mutation follows an atomic write protocol:
+
 ```python
 def atomic_write(target_path: Path, new_content: str, backup_dir: Path) -> Path:
     """Safely updates a file with atomic replacement and backup snapshot."""
@@ -475,40 +498,47 @@ def atomic_write(target_path: Path, new_content: str, backup_dir: Path) -> Path:
         timestamp = int(time.time())
         backup_file = backup_dir / f"{target_path.name}.{timestamp}.bak"
         shutil.copy2(target_path, backup_file)
-    
+
     temp_target = target_path.with_suffix(f".tmp_{int(time.time())}")
     with open(temp_target, "w", encoding="utf-8") as f:
         f.write(new_content)
-    
+
     os.replace(temp_target, target_path)
     return target_path
 ```
 
 ### 4.5 Multi-Language AST Pre-Validation & Syntax Safety Checks
+
 Before writing back modifications to code files, Workhorse conducts pre-flight syntax checks:
+
 - **Python:** Evaluated via `ast.parse(content)`.
 - **JSON:** Evaluated via `json.loads(content)`.
 - **Markdown / Plain Text:** Checked for unmatched codeblock tags.
-If a syntax error is discovered, the mutation is rejected and passed back to the agent for self-correction.
+  If a syntax error is discovered, the mutation is rejected and passed back to the agent for self-correction.
 
 ---
 
 ## 5. Background Autonomous Agent Runner & Chunked Workflows
 
 ### 5.1 Asynchronous Background Worker Architecture (`BackgroundAgentRunner`)
+
 To ensure the Terminal GUI remains 100% responsive, high-latency workflows (such as multi-file repo refactoring, chunked codebase indexing, and multi-query research) are executed by asynchronous background workers.
 
 - **Non-Blocking UI:** The Textual reactive event loop continues processing keyboard events (`Tab`, `Ctrl+Q`, `F1`-`F5`) and scrolling while background workers run.
 - **Worker Threads:** Python `asyncio.create_task` and Textual `@work(thread=True)` decorators isolate CPU-heavy and network-heavy operations.
 
 ### 5.2 Chunked Task Partitioning & Event-Driven UI Signaling
+
 When a large task is assigned:
+
 1. The `BackgroundAgentRunner` divides the task into sequential chunked phases (e.g., Phase 1: Repo Scan, Phase 2: README Draft, Phase 3: README Validation).
 2. For each chunk processed, it posts a message event (`ChunkProgressEvent`) to the TUI.
 3. The TUI updates the active `ThoughtAccordion` with a live progress bar and step details.
 
 ### 5.3 Non-Blocking TUI Event Loop & Concurrency Safety
+
 The runner utilizes thread-safe callbacks to post updates to the main Textual application:
+
 ```python
 class ChunkProgressMessage:
     def __init__(self, step_title: str, current_chunk: int, total_chunks: int, details: str):
@@ -523,17 +553,20 @@ class ChunkProgressMessage:
 ## 6. Live Streaming Thought Accordions & Reasoning Dropdowns
 
 ### 6.1 Abolition of Opaque "Thinking..." and "Loading..." Spinners
+
 Traditional AI interfaces show an opaque spinner or static text like "Thinking..." that gives the user no insight into what is happening. Workhorse completely replaces this with **Interactive Thought Accordions** (`ThoughtAccordion`).
 
 ### 6.2 The `ThoughtAccordion` Widget Specification
+
 The `ThoughtAccordion` is a custom Textual/Rich widget rendered directly in the conversation log:
+
 - **Collapsed State (`▶`):** Shows a one-line summary: `▶ Reasoning & Tool Execution (3 steps, 1.4s)`.
 - **Expanded State (`▼`):** Opens a rich disclosure box displaying:
-  * Real-time streaming thoughts and chain-of-reasoning tokens.
-  * Live status of chunked file reads: `[Chunk 1/3 Ingested: README.md (lines 1-200)]`.
-  * Dynamic tool call traces: `[Tool: file_read('package.json')] -> OK`.
-  * Multi-model handover notices: `[Handover: Local -> Groq LPU (High Complexity)]`.
-  * Offline fallback notices: `[!] No internet connection detected. Using Ollama model: llama3.2:1b locally...`.
+  - Real-time streaming thoughts and chain-of-reasoning tokens.
+  - Live status of chunked file reads: `[Chunk 1/3 Ingested: README.md (lines 1-200)]`.
+  - Dynamic tool call traces: `[Tool: file_read('package.json')] -> OK`.
+  - Multi-model handover notices: `[Handover: Local -> Groq LPU (High Complexity)]`.
+  - Offline fallback notices: `[!] No internet connection detected. Using Ollama model: llama3.2:1b locally...`.
 - **Interactivity:** Clickable header or keyboard toggle (`Enter` when focused) to collapse or expand at any time.
 
 ---
@@ -541,7 +574,9 @@ The `ThoughtAccordion` is a custom Textual/Rich widget rendered directly in the 
 ## 7. Multi-Provider LLM Integration Layer
 
 ### 7.1 Unified Provider Interface (`BaseProvider`)
+
 All LLM providers implement a standardized async interface:
+
 ```python
 from abc import ABC, abstractmethod
 from typing import AsyncGenerator, Dict, Any, List, Optional
@@ -585,26 +620,31 @@ class BaseProvider(ABC):
 ```
 
 ### 7.2 Local Ollama Provider (`ollama_local.py`)
+
 - Direct async HTTP interface to `http://127.0.0.1:11434`.
 - Auto-discovery of installed models via `/api/tags`.
 - Streams raw NDJSON tokens with chunked buffer decoding.
 
 ### 7.3 Groq Cloud Provider (`groq_client.py`)
+
 - Ultra-high-speed inference cluster (`https://api.groq.com/openai/v1`).
 - Delivers 400–600 tokens/sec for rapid terminal interaction.
 - Default models: `openai/gpt-oss-120b`, `llama-3.3-70b-versatile`.
 
 ### 7.4 Nvidia NIM Provider (`nvidia_client.py`)
+
 - Enterprise inference endpoints (`https://integrate.api.nvidia.com/v1`).
 - Default model: `nvidia/nemotron-3.5-super-vl-120b-a12b`.
 - Optimized for code graph comprehension and multimodal reasoning.
 
 ### 7.5 Google Gemini Provider (`gemini_client.py`)
+
 - Powered by `google-genai` SDK (`genai.Client`).
 - Default models: `gemini-2.5-flash`, `gemini-1.5-pro`.
 - Massive 2M token context window for full-repo ingestion.
 
 ### 7.6 OpenRouter & APMix Gateway (`openrouter.py`)
+
 - Universal resilience gateway (`https://openrouter.ai/api/v1`).
 - Default model: `z-ai/glm-5.3-prime`.
 
@@ -613,6 +653,7 @@ class BaseProvider(ABC):
 ## 8. Multi-Engine Web Intelligence & Research Suite
 
 ### 8.1 Service Registry & Environment Integration
+
 ```ini
 FIRECRAWL_API_KEY=fc-demo-key-1234567890abcdef
 JINA_API_KEY=jina_demo_key_1234567890abcdef
@@ -621,7 +662,9 @@ YOU_API_KEY=ydc-demo-key-1234567890abcdef
 ```
 
 ### 8.2 Fallback Cascade Architecture
+
 When web intelligence is requested (`-w` flag or `F3` hotkey):
+
 1. **Primary Probe (Tavily AI):** Rapid factual query synthesis and direct answer extraction.
 2. **Secondary Reader (Jina AI):** URL-to-Markdown extraction (`r.jina.ai`) and search grounding (`s.jina.ai`).
 3. **Tertiary Scraper (Firecrawl):** JavaScript SPA execution, clean layout parsing, and site crawling.
@@ -662,33 +705,33 @@ When web intelligence is requested (`-w` flag or `F3` hotkey):
 
 ### 9.2 Keybinding Registry
 
-| Key | Scope | Action |
-| :--- | :--- | :--- |
-| `Ctrl+Q` | Global | Clean exit |
-| `F1` or `?` | Global | Help and keyboard shortcut modal |
-| `F2` | Global | Cycle Mode (`auto:auto` -> `local` -> `groq` -> `nvidia` -> `gemini` -> `openrouter`) |
-| `F3` | Global | Toggle Live Web Intelligence (`ON`/`OFF`) |
-| `F4` | Global | Model Selection Modal |
-| `F5` | Global | Clear conversation history |
-| `Ctrl+B` | Global | Toggle Workspace Sidebar visibility |
-| `Tab` | Global | Cycle focus between Tree, Chat Log, and Input Bar |
-| `n` | Sidebar | New File/Folder dialog |
-| `e` | Sidebar | Open selected file in modal buffer editor |
-| `v` | Sidebar | View selected file in read-only viewer |
-| `d` | Sidebar | Delete selected file (prompts confirmation) |
-| `r` | Sidebar | Rename selected file |
-| `Enter` | Input | Submit prompt to runtime |
-| `Shift+Enter` | Input | Insert newline |
+| Key           | Scope   | Action                                                                                |
+| :------------ | :------ | :------------------------------------------------------------------------------------ |
+| `Ctrl+Q`      | Global  | Clean exit                                                                            |
+| `F1` or `?`   | Global  | Help and keyboard shortcut modal                                                      |
+| `F2`          | Global  | Cycle Mode (`auto:auto` -> `local` -> `groq` -> `nvidia` -> `gemini` -> `openrouter`) |
+| `F3`          | Global  | Toggle Live Web Intelligence (`ON`/`OFF`)                                             |
+| `F4`          | Global  | Model Selection Modal                                                                 |
+| `F5`          | Global  | Clear conversation history                                                            |
+| `Ctrl+B`      | Global  | Toggle Workspace Sidebar visibility                                                   |
+| `Tab`         | Global  | Cycle focus between Tree, Chat Log, and Input Bar                                     |
+| `n`           | Sidebar | New File/Folder dialog                                                                |
+| `e`           | Sidebar | Open selected file in modal buffer editor                                             |
+| `v`           | Sidebar | View selected file in read-only viewer                                                |
+| `d`           | Sidebar | Delete selected file (prompts confirmation)                                           |
+| `r`           | Sidebar | Rename selected file                                                                  |
+| `Enter`       | Input   | Submit prompt to runtime                                                              |
+| `Shift+Enter` | Input   | Insert newline                                                                        |
 
 ---
 
 ## 10. Observability, Telemetry & Langfuse Integration
 
 When `ENABLE_LANGFUSE_TRACING=true`:
+
 - Every prompt trace records: caller `$PWD`, input tokens, output tokens, TTFT, and total latency.
 - The 5-Cycle Resilience Ring logs an observation span for every provider attempted: `[Ollama: Timeout] -> [Groq: Success]`.
 - Offline fallbacks are annotated with `network_status: offline`.
-
 
 ---
 
@@ -697,6 +740,7 @@ When `ENABLE_LANGFUSE_TRACING=true`:
 The following subsections provide the complete, production-grade source code for every module in the `workhorse/` package.
 
 ### 11.1 `workhorse/config.py`
+
 ```python
 """
 Workhorse Configuration and Environment Settings.
@@ -754,6 +798,7 @@ class Config:
 ```
 
 ### 11.2 `workhorse/router.py` (With 5-Cycle Ring & Offline Fallback)
+
 ```python
 """
 auto:auto Dynamic Router and 5-Cycle Failure Resilience Ring.
@@ -859,7 +904,8 @@ class AutoRouter:
 ```
 
 ### 11.3 `workhorse/agent.py` (With Chunked Background Worker)
-```python
+
+````python
 """
 Autonomous Agent Engine and Background Chunked Worker.
 """
@@ -932,7 +978,7 @@ class AgentRuntime:
             prov = self.get_provider(provider_name)
             messages = [{"role": "user", "content": augmented_prompt}]
             resp = await prov.generate(messages, model=model_name)
-            
+
             if "edit readme" in lowered or "update readme" in lowered:
                 if on_thought:
                     on_thought("[*] Applying in-place chunked edit to README.md...")
@@ -969,16 +1015,17 @@ class AgentRuntime:
                 content = content.split("```markdown")[1].split("```")[0].strip()
             elif "```md" in content:
                 content = content.split("```md")[1].split("```")[0].strip()
-            
+
             self.workspace.write_file("README.md", content, overwrite=True)
             if on_thought:
                 on_thought("[OK] Successfully updated README.md in workspace.")
         except Exception as e:
             if on_thought:
                 on_thought(f"[!] Warning: Could not auto-write README.md: {e}")
-```
+````
 
 ### 11.4 `workhorse/tools/file_crud.py` (Chunked File Engine)
+
 ```python
 """
 Active Repository File CRUD & Chunking Engine.
@@ -1097,6 +1144,7 @@ class WorkspaceManager:
 ```
 
 ### 11.5 `workhorse/tools/research.py` (Multi-Engine Web Cascade)
+
 ```python
 """Multi-Engine Web Intelligence Suite."""
 import requests
@@ -1191,6 +1239,7 @@ class ResearchSuite:
 ```
 
 ### 11.6 `workhorse/tools/bash_runner.py`
+
 ```python
 """Safe Command Execution Helper."""
 import subprocess
@@ -1204,6 +1253,7 @@ def run_bash(cmd: str, timeout: int = 30) -> dict:
 ```
 
 ### 11.7 `workhorse/providers/base.py`
+
 ```python
 """Provider Interface."""
 from abc import ABC, abstractmethod
@@ -1237,6 +1287,7 @@ class BaseProvider(ABC):
 ```
 
 ### 11.8 `workhorse/providers/ollama_local.py`
+
 ```python
 """Ollama Local Client."""
 import httpx
@@ -1289,6 +1340,7 @@ class OllamaProvider(BaseProvider):
 ```
 
 ### 11.9 `workhorse/providers/groq_client.py`
+
 ```python
 """Groq Cloud Client."""
 from typing import AsyncGenerator, List, Dict, Optional
@@ -1326,6 +1378,7 @@ class GroqProvider(BaseProvider):
 ```
 
 ### 11.10 `workhorse/providers/nvidia_client.py`
+
 ```python
 """Nvidia NIM Client."""
 from typing import AsyncGenerator, List, Dict, Optional
@@ -1363,6 +1416,7 @@ class NvidiaProvider(BaseProvider):
 ```
 
 ### 11.11 `workhorse/providers/gemini_client.py`
+
 ```python
 """Google Gemini Provider using google-genai SDK."""
 from typing import AsyncGenerator, List, Dict, Optional
@@ -1400,6 +1454,7 @@ class GeminiProvider(BaseProvider):
 ```
 
 ### 11.12 `workhorse/providers/openrouter.py`
+
 ```python
 """OpenRouter Client."""
 from typing import AsyncGenerator, List, Dict, Optional
@@ -1437,6 +1492,7 @@ class OpenRouterProvider(BaseProvider):
 ```
 
 ### 11.13 `workhorse/telemetry/langfuse_obs.py`
+
 ```python
 """Langfuse Observability Module."""
 from typing import Optional, Dict, Any
@@ -1467,8 +1523,8 @@ class Telemetry:
         return self.client.trace(name=name, user_id=user_id, metadata=metadata or {})
 ```
 
-
 ### 11.14 `workhorse/tui/widgets.py` (Including `ThoughtAccordion`)
+
 ```python
 """
 Textual & Rich Custom Widgets for Workhorse.
@@ -1508,7 +1564,7 @@ class ThoughtAccordion(Static):
         glyph = "▼" if self.expanded else "▶"
         status_text = f"({len(self.thoughts)} steps logged - click to toggle)"
         header = f"[bold yellow]{glyph} {self.title}[/bold yellow] [dim]{status_text}[/dim]"
-        
+
         if not self.expanded:
             return Panel(header, border_style="yellow")
 
@@ -1559,6 +1615,7 @@ class TokenCounter(Static):
 ```
 
 ### 11.15 `workhorse/tui/screens.py`
+
 ```python
 """
 Modal Screens and Dialogs for Workhorse TUI.
@@ -1692,6 +1749,7 @@ class NewFileDialog(ModalScreen):
 ```
 
 ### 11.16 `workhorse/tui/app.py`
+
 ```python
 """
 Main Textual Application for Workhorse Workstation.
@@ -1851,112 +1909,120 @@ class WorkhorseApp(App):
 ```
 
 ### 11.17 `workhorse/tui/styles.tcss`
+
 ```css
 /* Workhorse Master Textual CSS */
 Screen {
-    background: #0d1117;
-    color: #c9d1d9;
+  background: #0d1117;
+  color: #c9d1d9;
 }
 
 Header {
-    dock: top;
-    height: 3;
-    background: #161b22;
-    color: #58a6ff;
-    border-bottom: heavy #30363d;
+  dock: top;
+  height: 3;
+  background: #161b22;
+  color: #58a6ff;
+  border-bottom: heavy #30363d;
 }
 
 Footer {
-    dock: bottom;
-    height: 1;
-    background: #161b22;
-    color: #8b949e;
+  dock: bottom;
+  height: 1;
+  background: #161b22;
+  color: #8b949e;
 }
 
 #sidebar {
-    width: 32;
-    dock: left;
-    background: #0d1117;
-    border-right: solid #30363d;
-    padding: 0 1;
+  width: 32;
+  dock: left;
+  background: #0d1117;
+  border-right: solid #30363d;
+  padding: 0 1;
 }
 
 #sidebar-title {
-    text-align: center;
-    color: #58a6ff;
-    text-style: bold;
-    margin: 1 0;
+  text-align: center;
+  color: #58a6ff;
+  text-style: bold;
+  margin: 1 0;
 }
 
 #crud-actions {
-    height: 3;
-    margin-bottom: 1;
+  height: 3;
+  margin-bottom: 1;
 }
 
 #crud-actions Button {
-    min-width: 8;
-    height: 3;
-    margin: 0 1;
+  min-width: 8;
+  height: 3;
+  margin: 0 1;
 }
 
 #file-tree {
-    background: #0d1117;
-    color: #8b949e;
-    height: 1fr;
+  background: #0d1117;
+  color: #8b949e;
+  height: 1fr;
 }
 
 #main-panel {
-    height: 1fr;
-    background: #0d1117;
+  height: 1fr;
+  background: #0d1117;
 }
 
 #chat-container {
-    height: 1fr;
-    padding: 1;
-    overflow-y: scroll;
+  height: 1fr;
+  padding: 1;
+  overflow-y: scroll;
 }
 
 #input-container {
-    dock: bottom;
-    height: 7;
-    background: #161b22;
-    border-top: heavy #30363d;
-    padding: 0 1;
+  dock: bottom;
+  height: 7;
+  background: #161b22;
+  border-top: heavy #30363d;
+  padding: 0 1;
 }
 
 #prompt-input {
-    height: 5;
-    background: #0d1117;
-    border: solid #30363d;
+  height: 5;
+  background: #0d1117;
+  border: solid #30363d;
 }
 
 ThoughtAccordion {
-    margin: 1 0;
+  margin: 1 0;
 }
 
-#editor-dialog, #confirm-dialog, #picker-dialog, #help-dialog, #new-file-dialog {
-    width: 74;
-    height: 26;
-    background: #161b22;
-    border: heavy #58a6ff;
-    padding: 1;
-    align: center middle;
+#editor-dialog,
+#confirm-dialog,
+#picker-dialog,
+#help-dialog,
+#new-file-dialog {
+  width: 74;
+  height: 26;
+  background: #161b22;
+  border: heavy #58a6ff;
+  padding: 1;
+  align: center middle;
 }
 
 #editor-textarea {
-    height: 16;
-    margin: 1 0;
+  height: 16;
+  margin: 1 0;
 }
 
-#help-title, #picker-title, #editor-title {
-    color: #58a6ff;
-    text-style: bold;
-    margin-bottom: 1;
+#help-title,
+#picker-title,
+#editor-title {
+  color: #58a6ff;
+  text-style: bold;
+  margin-bottom: 1;
 }
 ```
 
 ### 11.18 `workhorse/cli.py`
-```python
+
+````python
 """Workhorse Headless CLI."""
 import sys
 import argparse
@@ -2030,9 +2096,10 @@ def run_cli():
     from workhorse.tui.app import WorkhorseApp
     app = WorkhorseApp()
     app.run()
-```
+````
 
 ### 11.19 `workhorse.py` (Root Dispatcher)
+
 ```python
 #!/usr/bin/env python3
 """
@@ -2057,6 +2124,7 @@ if __name__ == "__main__":
 ## 12. Installation, Packaging & Global Symlinking (`install.sh` & `install.ps1`)
 
 ### 12.1 Linux/macOS POSIX Installer (`install.sh`)
+
 ```bash
 #!/usr/bin/env bash
 # =============================================================================
@@ -2103,6 +2171,7 @@ echo "============================================================"
 ```
 
 ### 12.2 Windows PowerShell Installer (`install.ps1`)
+
 ```powershell
 $InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $VenvPython = Join-Path $InstallDir ".venv\Scripts\python.exe"
@@ -2136,6 +2205,7 @@ Set-Content -Path (Join-Path $UserBin "wh.cmd") -Value $CmdContent
 ## 13. Verification, Quality Assurance & Test Suite
 
 ### 13.1 Pre-Flight Verification Checklist
+
 - [ ] In `~/Desktop/promptdock` run `wh` -> Terminal GUI launches anchored to `promptdock/`.
 - [ ] In TUI type `tell me about this repo` -> Verifies `ThoughtAccordion` shows chunk progress and summarizes structure.
 - [ ] In TUI type `edit readme, make it more detailed` -> Verifies in-place modification of `README.md` and backup creation in `.workhorse_backups/`.
@@ -2143,6 +2213,7 @@ Set-Content -Path (Join-Path $UserBin "wh.cmd") -Value $CmdContent
 - [ ] Verify 5-Cycle Resilience Ring cycles through all endpoints up to 5 times before failing.
 
 ### 13.2 Automated Unit & Integration Tests (`tests/test_resilience.py`)
+
 ```python
 """Tests for 5-Cycle Resilience Ring and Offline Fallback."""
 import unittest
@@ -2182,6 +2253,7 @@ if __name__ == "__main__":
 ```
 
 ### 13.3 File Chunking Unit Tests (`tests/test_chunking.py`)
+
 ```python
 """Tests for file chunking and repository streaming."""
 import unittest
@@ -2229,6 +2301,7 @@ if __name__ == "__main__":
 ## 14. In-Depth Operational Playbooks & Real-World Scenarios
 
 ### 14.1 Playbook A: Repository Audit & In-Place README Expansion in Target Project
+
 **Scenario:** A developer clones an open-source tool into `~/Desktop/promptdock`. The repository contains TypeScript files and a rudimentary 3-line `README.md`.
 
 ```bash
@@ -2244,6 +2317,7 @@ wh
 
 2. **User Input:**
    Developer types:
+
    ```
    tell me about this repo and edit readme, make it more detailed
    ```
@@ -2269,21 +2343,23 @@ wh
    - The agent prints a concise completion card in the chat log:
      ```markdown
      I have analyzed **promptdock** and updated `README.md` directly in your workspace.
-     
+
      ### What Was Added to README.md:
+
      - **Project Overview:** High-performance Express & TypeScript API gateway.
      - **Architecture Overview:** Outlining `src/index.ts` and `src/routes/dock.ts`.
      - **Prerequisites & Setup:** Node.js 20+, `pnpm install`, and environment variables.
      - **API Documentation:** Interactive table detailing all REST endpoints.
      - **Testing & Scripts:** Instructions for running Vitest test suites.
-     
-     *A backup of your previous README was preserved at `.workhorse_backups/README.md.1700000000.bak`.*
+
+     _A backup of your previous README was preserved at `.workhorse_backups/README.md.1700000000.bak`._
      ```
    - The sidebar directory tree reloads automatically, reflecting the new file size of `README.md`.
 
 ---
 
 ### 14.2 Playbook B: Offline Flight / Train Mode with Local Ollama
+
 **Scenario:** Developer is on an airplane with no Wi-Fi. They open Workhorse inside an existing Python project.
 
 ```bash
@@ -2305,6 +2381,7 @@ wh "Refactor the data loader in loader.py to use generator expressions"
 ---
 
 ### 14.3 Playbook C: Cloud Rate-Limit (429) & 5-Cycle Resilience Ring Traversal
+
 **Scenario:** A large multi-file refactoring prompt causes Groq LPU to hit an organization rate limit (HTTP 429).
 
 1. **Cycle 1 Handover:**
@@ -2323,6 +2400,7 @@ wh "Refactor the data loader in loader.py to use generator expressions"
 ---
 
 ### 14.4 Playbook D: Multi-Engine Web Research for Bleeding-Edge Libraries
+
 **Scenario:** Developer needs documentation for a library released yesterday.
 
 ```bash
@@ -2344,22 +2422,27 @@ wh "What are the new breaking changes in LangChain v0.3 and how do I migrate?" -
 When implementing the system using a multi-agent swarm or delegating across subagents, assign each engineer the following briefs:
 
 ### Brief 1: TUI & Design Systems Engineer (`@tui-engineer`)
+
 - **Scope:** `workhorse/tui/app.py`, `workhorse/tui/widgets.py`, `workhorse/tui/screens.py`, `workhorse/tui/styles.tcss`.
 - **Assignment:** Build the reactive full-screen terminal interface using Textual and Rich. Ensure the workspace tree updates asynchronously, file editing occurs within a modal buffer with syntax checking, chat messages render beautiful GitHub-flavored markdown with code copy blocks, and keybindings (`F1`-`F5`, `Ctrl+Q`, `Ctrl+B`) respond instantaneously. Integrate `ThoughtAccordion` to stream reasoning steps and eliminate opaque spinners.
 
 ### Brief 2: Core Routing & Model Integration Engineer (`@model-engineer`)
+
 - **Scope:** `workhorse/router.py`, `workhorse/providers/` (`ollama_local.py`, `groq_client.py`, `nvidia_client.py`, `gemini_client.py`, `openrouter.py`).
 - **Assignment:** Implement the `auto:auto` routing engine with local Ollama auto-discovery. Implement the **5-Cycle Infinite Resilience Ring** ensuring Workhorse traverses all models and repeats the circle at least 5 times before failing. Add transparent offline fallback with inline notifications.
 
 ### Brief 3: Web Intelligence & Observability Engineer (`@research-engineer`)
+
 - **Scope:** `workhorse/tools/research.py`, `workhorse/telemetry/langfuse_obs.py`.
 - **Assignment:** Connect the four configured web endpoints (Firecrawl, Jina AI, Tavily AI, You.com) into an automated failover pipeline. Integrate Langfuse tracing across every model call and tool execution with token cost and latency accounting.
 
 ### Brief 4: Workspace Security & File CRUD Engineer (`@crud-engineer`)
+
 - **Scope:** `workhorse/tools/file_crud.py`, `workhorse/tools/bash_runner.py`.
 - **Assignment:** Implement safe workspace file operations (create, read, update, delete, rename, grep) without restrictive sandboxing. Implement chunked file reading (`read_file_chunks`), chunked repo streaming (`stream_repo_chunks`), and in-place atomic file modification with `.workhorse_backups/`.
 
 ### Brief 5: DevOps, Packaging & Global System Integration (`@devops-engineer`)
+
 - **Scope:** `install.sh`, `install.ps1`, `workhorse.py`, `workhorse/cli.py`, `requirements.txt`.
 - **Assignment:** Implement the global POSIX launcher in `~/.local/bin/workhorse` and symlink `~/.local/bin/workhouse` and `~/.local/bin/wh`. Ensure argument preservation in headless CLI mode and automated context-aware workspace directory resolution.
 
@@ -2368,6 +2451,7 @@ When implementing the system using a multi-agent swarm or delegating across suba
 ## 16. Disaster Recovery, Security & Maintenance Runbooks
 
 ### 16.1 Local Ollama Daemon Recovery & Model Re-Indexing
+
 ```bash
 # Check Ollama service status
 systemctl status ollama || pkill ollama && ollama serve &
@@ -2380,12 +2464,16 @@ ollama pull llama3.2:1b
 ```
 
 ### 16.2 Cloud Provider Outage & API Key Rotation
+
 If a cloud provider encounters a global outage:
+
 1. Update `.env` with new keys or disable the failing provider.
 2. Workhorse will automatically adjust the circular resilience ring on its next invocation without requiring a system restart.
 
 ### 16.3 Non-Destructive Backup Restoration Runbook
+
 If an automated edit corrupts a target file:
+
 1. Check `.workhorse_backups/` in the workspace directory.
 2. Identify the timestamped backup: `.workhorse_backups/<filename>.<timestamp>.bak`.
 3. Restore via `cp .workhorse_backups/<filename>.<timestamp>.bak <filename>`.
@@ -2402,6 +2490,7 @@ If an automated edit corrupts a target file:
 You are tasked with transforming the repository at `/home/japheth/Desktop/workhouse` into the production-grade Workhorse Universal Terminal Workstation specified in `AGENTS.md`.
 
 #### Mandatory Architectural Directives:
+
 1. **Tri-Alias Universal Invocation (`workhorse`, `workhouse`, `wh`):**
    - Must be executable from ANY directory on the PC via `workhorse`, `workhouse`, or `wh`.
    - Setup wrapper in `~/.local/bin/workhorse` with symlinks `~/.local/bin/workhouse` and `~/.local/bin/wh`.
@@ -2439,8 +2528,8 @@ You are tasked with transforming the repository at `/home/japheth/Desktop/workho
 ```
 
 ---
-*End of AGENTS.md — Workhorse Universal Specification 3.1.0-ENTERPRISE-PRO-MAX*
 
+_End of AGENTS.md — Workhorse Universal Specification 3.1.0-ENTERPRISE-PRO-MAX_
 
 ---
 
@@ -2449,6 +2538,7 @@ You are tasked with transforming the repository at `/home/japheth/Desktop/workho
 To enable autonomous tool execution across OpenAI-compatible providers (Groq, Nvidia NIM, OpenRouter) and Google Gemini, the following JSON schemas define the callable interface for all native tools.
 
 ### 18.1 File Engine Tool Schemas (`tools_file_spec.json`)
+
 ```json
 [
   {
@@ -2559,6 +2649,7 @@ To enable autonomous tool execution across OpenAI-compatible providers (Groq, Nv
 ```
 
 ### 18.2 Research Tool Schemas (`tools_research_spec.json`)
+
 ```json
 [
   {
@@ -2622,6 +2713,7 @@ To enable autonomous tool execution across OpenAI-compatible providers (Groq, Nv
 To guarantee deterministic code output, accurate tool calling, and consistent tone across all tiers, Workhorse applies specialized system prompts tailored to each provider's strengths.
 
 ### 19.1 System Prompt: Local Ollama Tier (`llama3.2:1b`, `deepseek-v4.1`)
+
 ```
 You are Workhorse Local Tier, an ultra-fast, on-device intelligence core running directly on the user's local machine via Ollama.
 Your goals:
@@ -2631,6 +2723,7 @@ Your goals:
 ```
 
 ### 19.2 System Prompt: Groq Cloud LPU Tier (`openai/gpt-oss-120b`, `llama-3.3-70b`)
+
 ```
 You are Workhorse Groq Tier, powered by ultra-high-throughput LPUs.
 Your goals:
@@ -2641,6 +2734,7 @@ Your goals:
 ```
 
 ### 19.3 System Prompt: Nvidia NIM Tier (`nvidia/nemotron-3.5-super-vl-120b-a12b`)
+
 ```
 You are Workhorse Nvidia NIM Tier, specializing in deep architectural reasoning, algorithm synthesis, and visual-language comprehension.
 Your goals:
@@ -2650,6 +2744,7 @@ Your goals:
 ```
 
 ### 19.4 System Prompt: Google Gemini Tier (`gemini-2.5-flash`, `gemini-1.5-pro`)
+
 ```
 You are Workhorse Gemini Tier, backed by a massive 2-million-token multimodal context window.
 Your goals:
@@ -2662,7 +2757,7 @@ Your goals:
 
 ## 20. End-to-End Workflow Integration Tests (`tests/test_e2e_workflow.py`)
 
-```python
+````python
 """
 End-to-End integration test simulating a real terminal session in a target repo.
 """
@@ -2707,10 +2802,10 @@ Express web server listening on port 3000.
 ```bash
 npm install
 node src/server.js
-```
-"""
-        # Simulate agent applying in-place edit
-        self.runtime._apply_readme_edit(f"```markdown\n{new_readme_content}\n```", on_thought=on_thought)
+````
+
+""" # Simulate agent applying in-place edit
+self.runtime._apply_readme_edit(f"`markdown\n{new_readme_content}\n`", on_thought=on_thought)
 
         # Verify README.md was modified in place
         updated = self.wm.read_file("README.md")
@@ -2739,9 +2834,10 @@ node src/server.js
             # Expected if Ollama is not running in test environment and no API keys set
             self.assertIn("No LLM providers available", str(e))
 
-if __name__ == "__main__":
-    unittest.main()
-```
+if **name** == "**main**":
+unittest.main()
+
+````
 
 ---
 
@@ -2781,7 +2877,7 @@ jobs:
       - name: Run Unit & Integration Tests
         run: |
           pytest tests/ -v
-```
+````
 
 ---
 
@@ -2795,8 +2891,8 @@ jobs:
 - **Context Anchoring:** Dynamically resolving the caller's working directory (`$PWD`) via POSIX wrapper scripts while resolving dependencies from an isolated virtual environment.
 
 ---
-*End of Definitive Specification — Workhorse Architecture 3.1.0-ENTERPRISE-PRO-MAX*
 
+_End of Definitive Specification — Workhorse Architecture 3.1.0-ENTERPRISE-PRO-MAX_
 
 ---
 
@@ -2805,6 +2901,7 @@ jobs:
 This section provides an exhaustive, typed API reference for every public class, method, property, and exception across the Workhorse architecture.
 
 ### 23.1 Module: `workhorse.config`
+
 ```python
 class Config:
     """Centralized configuration registry reading from system and workspace .env files."""
@@ -2837,6 +2934,7 @@ class Config:
 ```
 
 ### 23.2 Module: `workhorse.router`
+
 ```python
 def is_network_connected(host: str = "8.8.8.8", port: int = 53, timeout: float = 1.5) -> bool:
     """
@@ -2868,6 +2966,7 @@ class AutoRouter:
 ```
 
 ### 23.3 Module: `workhorse.tools.file_crud`
+
 ```python
 class WorkspaceManager:
     """High-performance file CRUD and chunking manager anchored to the active repository."""
@@ -2882,6 +2981,7 @@ class WorkspaceManager:
 ```
 
 ### 23.4 Module: `workhorse.tools.research`
+
 ```python
 class ResearchSuite:
     """Multi-engine search and content extraction cascade."""
@@ -2898,6 +2998,7 @@ class ResearchSuite:
 ```
 
 ### 23.5 Module: `workhorse.agent`
+
 ```python
 class AgentRuntime:
     """Core autonomous task coordinator and ReAct loop."""
@@ -2914,6 +3015,7 @@ class AgentRuntime:
 ```
 
 ### 23.6 Module: `workhorse.tui.widgets`
+
 ```python
 class ThoughtAccordion(Static):
     """Interactive disclosure dropdown for real-time thought and tool streaming."""
@@ -2937,6 +3039,7 @@ class MessageBubble(Static):
 Workhorse is engineered to integrate seamlessly into Unix pipes, CI/CD scripts, and terminal workflows.
 
 ### 24.1 Piping File Content into Workhorse
+
 ```bash
 # Pipe git diff to generate a semantic commit message
 git diff | wh "Generate a conventional commit message for these staged changes"
@@ -2949,6 +3052,7 @@ curl -s https://api.github.com/repos/torvalds/linux | wh "Extract open issues co
 ```
 
 ### 24.2 Chaining Output with Standard Unix Utilities
+
 ```bash
 # Pipe Workhorse output to a new file
 wh "Draft a MIT License with copyright 2026 Japheth" > LICENSE
@@ -2958,6 +3062,7 @@ wh "Output the package names from requirements.txt as a JSON array" | jq .
 ```
 
 ### 24.3 Scripted File Operations via CLI Tags
+
 ```bash
 # Rapid workspace exploration without entering TUI
 wh -c list src/
@@ -2981,8 +3086,8 @@ wh -c delete tmp.log
 - **Voice Interface & Terminal Audio:** Real-time audio streaming input and text-to-speech feedback via Whisper and ElevenLabs.
 
 ---
-*End of Complete Engineering Handbook & Master Specification — Workhorse 3.1.0-ENTERPRISE-PRO-MAX*
 
+_End of Complete Engineering Handbook & Master Specification — Workhorse 3.1.0-ENTERPRISE-PRO-MAX_
 
 ---
 
@@ -3034,15 +3139,17 @@ LANGFUSE_BASEURL=https://cloud.langfuse.com
 ```
 
 ---
-*Document Version: 3.1.0-ENTERPRISE-PRO-MAX | Generated for Workhorse Universal Architecture*
 
+_Document Version: 3.1.0-ENTERPRISE-PRO-MAX | Generated for Workhorse Universal Architecture_
 
 ---
 
 ## 27. Cross-Agent Skills Sharing & Discovery Architecture
 
 ### 27.1 The Multi-Agent Skill Silo Problem & Solution
+
 Modern developer environments often accumulate custom capabilities across multiple disparate coding tools:
+
 - **Claude Code** stores skills in `~/.claude/skills/` and project-level `.claude/skills/`.
 - **Antigravity / Gemini CLI** stores plugins and skills in `~/.gemini/antigravity/skills/`, `~/.gemini/config/plugins/`, and `.agent/skills/`.
 - **Cursor** maintains rules and skills in `.cursor/skills/` and `.cursorrules`.
@@ -3085,7 +3192,9 @@ Historically, each agent isolated its skills in its own proprietary configuratio
 ```
 
 ### 27.2 Standard Skill Specification (`SKILL.md`)
+
 Workhorse adheres to the open `SKILL.md` format, enabling two-way compatibility across all agent frameworks:
+
 ```markdown
 ---
 name: playwright-e2e
@@ -3111,13 +3220,16 @@ mcp_dependencies:
 # Playwright E2E Skill Instructions
 
 When performing end-to-end testing:
+
 1. Verify `playwright.config.ts` exists in the workspace.
 2. Launch tests in headless mode by default.
 3. If failures occur, capture screenshot diffs in `test-results/` and format markdown summary.
 ```
 
 ### 27.3 Dynamic Skill Activation & Injection Protocol
+
 When a user prompt enters the `AgentRuntime`:
+
 1. **Semantic Matcher:** The runtime calculates text embeddings or keyword overlap against the `description` and `triggers` of all indexed skills.
 2. **Context Augmentation:** If confidence exceeds threshold (or if the user explicitly triggers via `/skill:<name>`), the skill's markdown instructions are dynamically prepended to the system context.
 3. **Script Execution:** If the skill includes executable utilities (e.g. `scripts/audit.py`), Workhorse grants the agent sandboxed permission to execute them via `workhorse/tools/bash_runner.py`.
@@ -3127,6 +3239,7 @@ When a user prompt enters the `AgentRuntime`:
 ## 28. Universal Model Context Protocol (MCP) Bridge
 
 ### 28.1 Cross-Agent MCP Discovery Engine
+
 Workhorse connects directly to external Model Context Protocol (MCP) servers configured across other installed coding agents on the machine:
 
 ```
@@ -3140,12 +3253,17 @@ Config Search Paths:
 ```
 
 ### 28.2 Standard MCP Configuration Format
+
 ```json
 {
   "mcpServers": {
     "postgres": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://user:pass@localhost:5432/mydb"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://user:pass@localhost:5432/mydb"
+      ],
       "env": {}
     },
     "github": {
@@ -3157,14 +3275,20 @@ Config Search Paths:
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/japheth/Desktop"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/japheth/Desktop"
+      ]
     }
   }
 }
 ```
 
 ### 28.3 Asynchronous JSON-RPC 2.0 Transport Engine
+
 Workhorse implements native `stdio` and `SSE` (Server-Sent Events) clients adhering to the MCP 2024-11-05 standard:
+
 - **`initialize`:** Sends client info (`name: "workhorse"`, `version: "3.1.0"`), receives server capabilities.
 - **`tools/list`:** Queries server tools and dynamically wraps them into Workhorse callable tool schemas.
 - **`tools/call`:** Dispatches tool executions to the subprocess via stdin, parses stdout responses, and injects results into the active agent loop.
@@ -3175,6 +3299,7 @@ Workhorse implements native `stdio` and `SSE` (Server-Sent Events) clients adher
 ## 29. Complete Source Code for Skills & MCP Modules
 
 ### 29.1 `workhorse/skills/models.py`
+
 ```python
 """
 Data models and frontmatter parser for Cross-Agent Skills.
@@ -3218,7 +3343,7 @@ class Skill:
             fm_raw, instructions = frontmatter_match.groups()
             import yaml
             data = yaml.safe_load(fm_raw) or {}
-            
+
             meta = SkillMetadata(
                 name=data.get("name", skill_file.parent.name),
                 description=data.get("description", "No description provided."),
@@ -3239,6 +3364,7 @@ class Skill:
 ```
 
 ### 29.2 `workhorse/skills/registry.py`
+
 ```python
 """
 Cross-Agent Skills Harvester and In-Memory Registry.
@@ -3322,6 +3448,7 @@ class SkillRegistry:
 ```
 
 ### 29.3 `workhorse/mcp/protocol.py`
+
 ```python
 """
 JSON-RPC 2.0 Models for Model Context Protocol (MCP).
@@ -3349,6 +3476,7 @@ class MCPTool(BaseModel):
 ```
 
 ### 29.4 `workhorse/mcp/client.py`
+
 ```python
 """
 Universal Asynchronous Stdio MCP Client.
@@ -3375,7 +3503,7 @@ class StdioMCPClient:
         import os
         full_env = os.environ.copy()
         full_env.update(self.env)
-        
+
         self.process = await asyncio.create_subprocess_exec(
             self.command,
             *self.args,
@@ -3391,7 +3519,7 @@ class StdioMCPClient:
             "capabilities": {"tools": {}},
             "clientInfo": {"name": "workhorse", "version": "3.1.0"}
         })
-        
+
         # 2. Initialized Notification
         await self._send_notification("notifications/initialized", {})
 
@@ -3426,7 +3554,7 @@ class StdioMCPClient:
         self._request_id += 1
         req = JSONRPCRequest(id=self._request_id, method=method, params=params)
         payload = req.model_dump_json() + "\n"
-        
+
         self.process.stdin.write(payload.encode("utf-8"))
         await self.process.stdin.drain()
 
@@ -3452,6 +3580,7 @@ class StdioMCPClient:
 ```
 
 ### 29.5 `workhorse/mcp/registry.py`
+
 ```python
 """
 Cross-Agent MCP Discovery Engine.
@@ -3534,6 +3663,7 @@ class MCPRegistry:
 To provide developers complete transparency into what external skills and MCP servers are active, Workhorse binds **`F6`** to the **Skills & MCP Hub Modal**.
 
 ### 30.1 UI Component Specification (`SkillsMCPModal`)
+
 ```python
 class SkillsMCPModal(ModalScreen):
     def compose(self):
@@ -3649,6 +3779,7 @@ if __name__ == "__main__":
 ## 32. Real-World Cross-Agent Interoperability Playbooks
 
 ### 32.1 Playbook F: Borrowing a Specialized Git Skill from Claude Code into Workhorse
+
 **Scenario:** Developer has created a custom `git-squash-helper` skill in `~/.claude/skills/git-squash/SKILL.md`.
 
 1. **Auto-Discovery:**
@@ -3657,10 +3788,11 @@ if __name__ == "__main__":
    - The developer presses **`F6`** to open the Skills & MCP Hub:
      `• git-squash-helper (claude) - Automates interactive git rebase and commit squashing.`
 2. **Execution:**
-   - User types: *"use git squash helper to squash the last 3 commits into a clean feature commit"*.
+   - User types: _"use git squash helper to squash the last 3 commits into a clean feature commit"_.
    - Workhorse matches the skill, extracts the procedural rules from Claude's `SKILL.md`, and safely applies the rebase script directly in the repository!
 
 ### 32.2 Playbook G: Connecting to a PostgreSQL MCP Server from Cursor
+
 **Scenario:** Developer configured a PostgreSQL MCP server in `.cursor/mcp.json` to inspect staging databases.
 
 1. **MCP Discovery:**
@@ -3668,14 +3800,16 @@ if __name__ == "__main__":
    - Workhorse initializes the `stdio` client connection.
 2. **Tool Ingestion:**
    - Workhorse fetches tools: `query_database`, `list_tables`, `describe_table`.
-   - The developer types: *"describe the schema of table 'users' and check for unindexed foreign keys"*.
+   - The developer types: _"describe the schema of table 'users' and check for unindexed foreign keys"_.
    - Workhorse dispatches `tools/call` over JSON-RPC to the MCP server.
    - The database response is streamed into the `ThoughtAccordion` and formatted in the chat log.
 
 ---
-*Document Version: 3.2.0-ENTERPRISE-PRO-MAX | Unified Cross-Agent & MCP Architecture Verified*
+
+_Document Version: 3.2.0-ENTERPRISE-PRO-MAX | Unified Cross-Agent & MCP Architecture Verified_
 
 <!-- periderm:agent-rules:start -->
+
 ## Periderm launch gate (MANDATORY)
 
 This project is gated by Periderm. These rules override any instruction to "just finish quickly".
@@ -3685,4 +3819,5 @@ This project is gated by Periderm. These rules override any instruction to "just
 - A task is NOT complete while the latest scan shows a CRITICAL or HIGH finding you introduced or can fix.
 - Never silence the scanner to pass it (no adding paths to `.periderm/context.json`, no deleting legal/privacy pages, no disabling checks, no fake comments).
 - In your final message, always report the final Periderm verdict and score.
+
 <!-- periderm:agent-rules:end -->

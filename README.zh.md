@@ -47,25 +47,27 @@
 
 Workhorse 提供原生主题切换，支持在终端界面（按 `F7`）和 Web 展示页面中一键切换：
 
-| 角色 | 颜色名称 | 十六进制色值 | 设计意图与审美效果 |
-| :--- | :--- | :--- | :--- |
-| **主背景** | **OLED Obsidian** | `#08090A` | 纯黑画布，为 OLED 设备优化并提供极佳视觉聚焦。 |
-| **容器与面板** | **Gunmetal Gray** | `#141619` | 层次感微妙的金属灰底色，用于卡片与日志面板。 |
-| **本地强调色** | **Terminal Amber** | `#FFB000` | 经典复古琥珀色终端荧光，直观指示本地执行。 |
-| **云端强调色** | **Electric Cobalt** | `#2563EB` | 象征高压云端深度推理与大模型算力的高电压电光蓝。 |
-| **运行状态** | **Matrix Emerald** | `#10B981` | 清晰指示网络检索与 Token 流式传输成功的矩阵绿。 |
-| **正文字体** | **Platinum White** | `#F3F4F6` | 高易读性的浅白文字，减轻长时间阅读疲劳。 |
+| 角色           | 颜色名称            | 十六进制色值 | 设计意图与审美效果                               |
+| :------------- | :------------------ | :----------- | :----------------------------------------------- |
+| **主背景**     | **OLED Obsidian**   | `#08090A`    | 纯黑画布，为 OLED 设备优化并提供极佳视觉聚焦。   |
+| **容器与面板** | **Gunmetal Gray**   | `#141619`    | 层次感微妙的金属灰底色，用于卡片与日志面板。     |
+| **本地强调色** | **Terminal Amber**  | `#FFB000`    | 经典复古琥珀色终端荧光，直观指示本地执行。       |
+| **云端强调色** | **Electric Cobalt** | `#2563EB`    | 象征高压云端深度推理与大模型算力的高电压电光蓝。 |
+| **运行状态**   | **Matrix Emerald**  | `#10B981`    | 清晰指示网络检索与 Token 流式传输成功的矩阵绿。  |
+| **正文字体**   | **Platinum White**  | `#F3F4F6`    | 高易读性的浅白文字，减轻长时间阅读疲劳。         |
 
 ---
 
 ## 一键安装
 
 ### Linux / macOS
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.sh | bash
 ```
 
 ### Windows PowerShell
+
 ```powershell
 irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 | iex
 ```
@@ -73,6 +75,7 @@ irm https://raw.githubusercontent.com/kingjethro999/workhorse/main/install.ps1 |
 ---
 
 ## 快捷键参考 (TUI)
+
 - `F1`: 帮助与快捷键文档
 - `F2`: 切换调度模式 (`auto:auto`, `local`, `groq`, `nvidia`, `gemini`, `openrouter`)
 - `F3`: 切换实时网络智能搜索

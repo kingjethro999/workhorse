@@ -9,12 +9,14 @@ We are committed to providing a welcoming, inclusive, and harassment-free enviro
 ## Development Setup
 
 1. **Clone the Repository:**
+
    ```bash
    git clone https://github.com/kingjethro999/workhorse.git
    cd workhorse
    ```
 
 2. **Set Up Python Virtual Environment:**
+
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
@@ -24,12 +26,14 @@ We are committed to providing a welcoming, inclusive, and harassment-free enviro
 
 3. **Install Git Hooks:**
    The repository includes an automated version bumper hook:
+
    ```bash
    cp scripts/git-hooks/pre-commit .git/hooks/pre-commit
    chmod +x .git/hooks/pre-commit
    ```
 
 4. **Run Tests:**
+
    ```bash
    pytest
    ```
@@ -52,6 +56,7 @@ We are committed to providing a welcoming, inclusive, and harassment-free enviro
 ## Versioning Scheme
 
 Workhorse uses an automated commit-driven versioning scheme:
+
 - Every regular commit increments the patch version (+0.0.1).
 - Reaching `x.x.9` rolls over to `x.(x+1).0`.
 - Reaching `x.599.9` rolls over to `(x+1).0.0`.

@@ -67,9 +67,12 @@ export const ResilienceRingVisualizer: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-xl">
       <div className="text-center mb-6">
-        <h3 className="text-xl font-bold text-[var(--text-primary)]">The 5-Cycle Infinite Resilience Ring</h3>
+        <h3 className="text-xl font-bold text-[var(--text-primary)]">
+          The 5-Cycle Infinite Resilience Ring
+        </h3>
         <p className="text-sm text-[var(--text-muted)] mt-1">
-          Workhorse never fails prematurely. It traverses local and cloud clusters up to 5 full cycles.
+          Workhorse never fails prematurely. It traverses local and cloud
+          clusters up to 5 full cycles.
         </p>
       </div>
 
@@ -93,10 +96,16 @@ export const ResilienceRingVisualizer: React.FC = () => {
                   className="w-2.5 h-2.5 rounded-full inline-block"
                   style={{ backgroundColor: tier.badgeColor }}
                 />
-                <span className="text-xs font-bold text-[var(--text-primary)] truncate">{tier.name.split(". ")[1]}</span>
+                <span className="text-xs font-bold text-[var(--text-primary)] truncate">
+                  {tier.name.split(". ")[1]}
+                </span>
               </div>
-              <div className="text-[11px] font-mono text-[var(--text-muted)] truncate">{tier.model.split("/")[0]}</div>
-              <div className="text-[10px] font-mono text-[var(--accent-local)] mt-2 font-semibold">{tier.latency}</div>
+              <div className="text-[11px] font-mono text-[var(--text-muted)] truncate">
+                {tier.model.split("/")[0]}
+              </div>
+              <div className="text-[10px] font-mono text-[var(--accent-local)] mt-2 font-semibold">
+                {tier.latency}
+              </div>
             </button>
           );
         })}
@@ -110,7 +119,9 @@ export const ResilienceRingVisualizer: React.FC = () => {
               className="w-3 h-3 rounded-full inline-block"
               style={{ backgroundColor: selected.badgeColor }}
             />
-            <h4 className="font-bold text-base text-[var(--text-primary)]">{selected.name}</h4>
+            <h4 className="font-bold text-base text-[var(--text-primary)]">
+              {selected.name}
+            </h4>
             <span className="text-xs font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 uppercase">
               {selected.type}
             </span>
@@ -122,9 +133,13 @@ export const ResilienceRingVisualizer: React.FC = () => {
 
         <div className="shrink-0 flex flex-col gap-1 text-right font-mono text-xs">
           <span className="text-zinc-500">Model:</span>
-          <span className="text-[var(--text-primary)] font-bold">{selected.model}</span>
+          <span className="text-[var(--text-primary)] font-bold">
+            {selected.model}
+          </span>
           <span className="text-zinc-500 mt-1">Throughput:</span>
-          <span className="text-[var(--accent-success)] font-semibold">{selected.latency}</span>
+          <span className="text-[var(--accent-success)] font-semibold">
+            {selected.latency}
+          </span>
         </div>
       </div>
     </div>
